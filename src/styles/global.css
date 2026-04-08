@@ -1,0 +1,91 @@
+/* ── Reset & base ─────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/*
+  Breakpoints:
+  Mobile:  < 600px
+  Tablet:  600px – 1023px
+  Desktop: ≥ 1024px
+*/
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #0f0f13;
+  color: #e2e2e8;
+  min-height: 100vh;
+  padding: 2rem 1.5rem;
+}
+
+@media (max-width: 1023px) {
+  body { padding: 1.5rem 1.25rem; }
+}
+
+@media (max-width: 599px) {
+  body { padding: 1rem 0.85rem; }
+}
+
+#root {
+  width: 100%;
+  max-width: 100%;
+  border: none;
+  text-align: left;
+}
+
+/* ── Shared components ────────────────────────── */
+.card {
+  background: #18181f;
+  border: 1px solid #2a2a35;
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+@media (max-width: 1023px) {
+  .card { padding: 1.25rem; }
+}
+
+@media (max-width: 599px) {
+  .card { padding: 1rem; border-radius: 12px; }
+}
+
+.card-title {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #6b6b7e;
+  margin-bottom: 1rem;
+}
+
+.categoria-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.65rem;
+  background: #1e1a2e;
+  color: #a78bfa;
+  border: 1px solid #3b2f6e;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  background: #0f0f13;
+  border: 1px solid #2a2a35;
+  border-radius: 10px;
+  color: #e2e2e8;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input::placeholder { color: #3e3e50; }
+
+input:focus {
+  border-color: #7c5cfc;
+  box-shadow: 0 0 0 3px rgba(124, 92, 252, 0.15);
+}

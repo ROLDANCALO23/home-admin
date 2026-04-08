@@ -1,0 +1,53 @@
+.filtro-mes {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.filtro-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+}
+
+.filtro-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #6b6b7e;
+}
+
+.filtro-select {
+  width: 100%;
+  padding: 0.45rem 2rem 0.45rem 0.75rem;
+  background: #0f0f13;
+  border: 1px solid #2a2a35;
+  border-radius: 8px;
+  color: #e2e2e8;
+  font-size: 0.85rem;
+  cursor: pointer;
+  outline: none;
+  text-transform: capitalize;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b6b7e' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-color: #0f0f13;
+}
+
+.filtro-select:focus {
+  border-color: #7c5cfc;
+  box-shadow: 0 0 0 3px rgba(124, 92, 252, 0.15);
+}
+
+.filtro-select:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.filtro-select option {
+  background: #18181f;
+  text-transform: capitalize;
+}

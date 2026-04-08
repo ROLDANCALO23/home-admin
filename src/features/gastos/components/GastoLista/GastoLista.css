@@ -1,0 +1,94 @@
+.lista-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lista-count {
+  font-size: 0.78rem;
+  color: #6b6b7e;
+  background: #0f0f13;
+  border: 1px solid #2a2a35;
+  border-radius: 20px;
+  padding: 0.15rem 0.6rem;
+}
+
+.gasto-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid #1f1f28;
+}
+
+.gasto-item:last-child { border-bottom: none; }
+
+.gasto-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.gasto-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.gasto-fecha {
+  font-size: 0.75rem;
+  color: #4e4e62;
+}
+
+.gasto-descripcion {
+  font-size: 0.95rem;
+  color: #e2e2e8;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gasto-derecha {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.gasto-monto {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.btn-eliminar {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid #2a2a35;
+  border-radius: 8px;
+  color: #3e3e50;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.btn-eliminar:hover {
+  background: #2a1a1a;
+  border-color: #5c2020;
+  color: #f87171;
+}
+
+.empty {
+  color: #3e3e50;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 2rem 0;
+}

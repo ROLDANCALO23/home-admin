@@ -1,0 +1,61 @@
+.registro-gastos {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.app-header {
+  margin-bottom: 2rem;
+}
+
+.app-header h1 {
+  font-size: 1.9rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #fff;
+  margin: 0 0 0.25rem;
+}
+
+.app-header p {
+  font-size: 0.9rem;
+  color: #6b6b7e;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.columna-derecha {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Card de lista con scroll interno */
+.card--lista {
+  overflow-y: auto;
+  max-height: 350px;
+  scrollbar-width: thin;
+  scrollbar-color: #2a2a35 transparent;
+}
+
+.card--lista::-webkit-scrollbar { width: 4px; }
+.card--lista::-webkit-scrollbar-track { background: transparent; }
+.card--lista::-webkit-scrollbar-thumb { background: #2a2a35; border-radius: 4px; }
+
+/* Tablet */
+@media (max-width: 1023px) {
+  .app-header h1 { font-size: 1.6rem; }
+  .app-header { margin-bottom: 1.5rem; }
+  .layout { grid-template-columns: 1fr 1fr; }
+}
+
+/* Mobile */
+@media (max-width: 599px) {
+  .app-header h1 { font-size: 1.35rem; }
+  .app-header { margin-bottom: 1.25rem; }
+  .layout { grid-template-columns: 1fr; gap: 1rem; }
+  .columna-derecha { gap: 1rem; }
+}
