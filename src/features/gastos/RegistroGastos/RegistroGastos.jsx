@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import GastoForm from '../components/GastoForm'
 import GastoLista from '../components/GastoLista'
 import ResumenCategorias from '../components/ResumenCategorias'
 import FiltroMes from '../components/FiltroMes'
+import { supabase } from '../../../lib/supabase'
 import './RegistroGastos.css'
 
 function RegistroGastos() {
@@ -10,12 +11,25 @@ function RegistroGastos() {
   const [anioSeleccionado, setAnioSeleccionado] = useState(null)
   const [mesSeleccionado, setMesSeleccionado] = useState(null)
 
-  const agregarGasto = (gasto) => {
-    setGastos([...gastos, { ...gasto, id: Date.now(), fecha: new Date() }])
+  useEffect(() => {
+    supabase
+      .from('gastos')
+      .select('*')
+      .order('fecha', { ascending: false })
+      .then(({ data, error }) => {
+        if (!error) setGastos(data.map((g) => ({ ...g, fecha: new Date(g.fecha) })))
+      })
+  }, [])
+
+  const agregarGasto = async (gasto) => {
+    const nuevo = { ...gasto, id: Date.now(), fecha: new Date() }
+    const { error } = await supabase.from('gastos').insert(nuevo)
+    if (!error) setGastos([...gastos, nuevo])
   }
 
-  const eliminarGasto = (id) => {
-    setGastos(gastos.filter((g) => g.id !== id))
+  const eliminarGasto = async (id) => {
+    const { error } = await supabase.from('gastos').delete().eq('id', id)
+    if (!error) setGastos(gastos.filter((g) => g.id !== id))
   }
 
   const gastosFiltrados = gastos.filter((g) => {
