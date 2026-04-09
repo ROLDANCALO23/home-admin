@@ -1,68 +1,42 @@
-.lista-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.lista-count {
-  font-size: 0.78rem;
-  color: #6b6b7e;
-  background: #0f0f13;
-  border: 1px solid #2a2a35;
-  border-radius: 20px;
-  padding: 0.15rem 0.6rem;
-}
-
 .gasto-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 1rem;
-  padding: 0.85rem 0;
+  gap: 0.6rem;
+  padding: 0.6rem 0;
   border-bottom: 1px solid #1f1f28;
 }
 
 .gasto-item:last-child { border-bottom: none; }
 
-.gasto-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  min-width: 0;
+.gasto-cat-emoji {
+  font-size: 1rem;
+  flex-shrink: 0;
+  width: 1.4rem;
+  text-align: center;
 }
 
-.gasto-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+.gasto-descripcion {
+  font-size: 0.88rem;
+  color: #e2e2e8;
+  font-weight: 500;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .gasto-fecha {
   font-size: 0.75rem;
   color: #4e4e62;
-}
-
-.gasto-descripcion {
-  font-size: 0.95rem;
-  color: #e2e2e8;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.gasto-derecha {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
   flex-shrink: 0;
 }
 
 .gasto-monto {
-  font-size: 1rem;
+  font-size: 0.88rem;
   font-weight: 700;
   color: #fff;
+  flex-shrink: 0;
 }
 
 .btn-eliminar {

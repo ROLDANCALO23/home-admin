@@ -8,8 +8,8 @@ import './RegistroGastos.css'
 
 function RegistroGastos() {
   const [gastos, setGastos] = useState([])
-  const [anioSeleccionado, setAnioSeleccionado] = useState(null)
-  const [mesSeleccionado, setMesSeleccionado] = useState(null)
+  const [anioSeleccionado, setAnioSeleccionado] = useState(new Date().getFullYear())
+  const [mesSeleccionado, setMesSeleccionado] = useState(new Date().getMonth())
 
   useEffect(() => {
     supabase
@@ -54,7 +54,7 @@ function RegistroGastos() {
             <span className="gastos-titulo">GASTOS</span>
             {gastosFiltrados.length > 0 && (
               <span className="lista-count">
-                {gastosFiltrados.length} {gastosFiltrados.length === 1 ? 'item' : 'items'}
+                {gastosFiltrados.length}
               </span>
             )}
             <FiltroMes
