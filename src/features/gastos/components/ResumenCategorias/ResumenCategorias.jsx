@@ -1,32 +1,25 @@
 import CATEGORIAS from '../../constants/categorias'
+import { formatCOP } from '../../../../lib/formatCOP'
 import './ResumenCategorias.css'
 
 function ResumenCategorias({ gastos }) {
   const totales = gastos.reduce((acc, gasto) => {
-    acc[gasto.categoria] = (acc[gasto.categoria] || 0) + gasto.monto
+    acc[gasto.categoria] = (acc[gasto.categoria] || 0) + Number(gasto.monto)
     return acc
   }, {})
-
-  const totalGeneral = gastos.reduce((acc, g) => acc + g.monto, 0)
 
   const categoriasConGasto = CATEGORIAS.filter((cat) => totales[cat.valor])
 
   return (
-    <>
-      <span className="card-title">Resumen por categoría</span>
-      <ul className="resumen-lista">
-        {categoriasConGasto.map((cat) => (
-          <li key={cat.valor}>
-            <span className="categoria-badge">{cat.emoji} {cat.label}</span>
-            <span className="tag-total">${totales[cat.valor].toFixed(2)}</span>
-          </li>
-        ))}
-      </ul>
-      <div className="total-general">
-        <span>Total general</span>
-        <span>${totalGeneral.toFixed(2)}</span>
-      </div>
-    </>
+    <div className="resumen-categorias">
+      {categoriasConGasto.map((cat) => (
+        <div key={cat.valor} className="resumen-fila">
+          <span className="resumen-emoji">{cat.emoji}</span>
+          <span className="resumen-label">{cat.label}</span>
+          <span className="resumen-total">{formatCOP(totales[cat.valor])}</span>
+        </div>
+      ))}
+    </div>
   )
 }
 

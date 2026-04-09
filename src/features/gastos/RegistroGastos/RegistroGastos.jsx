@@ -24,7 +24,7 @@ function RegistroGastos() {
   const agregarGasto = async (gasto) => {
     const nuevo = { ...gasto, id: Date.now(), fecha: new Date() }
     const { error } = await supabase.from('gastos').insert(nuevo)
-    if (!error) setGastos([...gastos, nuevo])
+    if (!error) setGastos([nuevo, ...gastos])
   }
 
   const eliminarGasto = async (id) => {
@@ -49,8 +49,14 @@ function RegistroGastos() {
         <div className="card">
           <GastoForm onAgregar={agregarGasto} />
         </div>
-        <div className="columna-derecha">
-          <div className="card">
+        <div className="card card--gastos">
+          <div className="gastos-header">
+            <span className="gastos-titulo">GASTOS</span>
+            {gastosFiltrados.length > 0 && (
+              <span className="lista-count">
+                {gastosFiltrados.length} {gastosFiltrados.length === 1 ? 'item' : 'items'}
+              </span>
+            )}
             <FiltroMes
               gastos={gastos}
               anioSeleccionado={anioSeleccionado}
@@ -59,13 +65,14 @@ function RegistroGastos() {
               onChangeMes={setMesSeleccionado}
             />
           </div>
-          <div className="card card--lista">
+          <div className="gastos-scroll">
             <GastoLista gastos={gastosFiltrados} onEliminar={eliminarGasto} />
           </div>
           {gastosFiltrados.length > 0 && (
-            <div className="card">
+            <>
+              <hr className="separador" />
               <ResumenCategorias gastos={gastosFiltrados} />
-            </div>
+            </>
           )}
         </div>
       </div>

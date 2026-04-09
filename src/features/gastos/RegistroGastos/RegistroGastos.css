@@ -27,23 +27,49 @@
   align-items: start;
 }
 
-.columna-derecha {
+.card--gastos {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
 }
 
-/* Card de lista con scroll interno */
-.card--lista {
+.gastos-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  margin-bottom: 0.5rem;
+}
+
+.gastos-titulo {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.gastos-header .filtro-mes {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.gastos-scroll {
   overflow-y: auto;
-  max-height: 350px;
+  flex: 1;
+  max-height: 340px;
   scrollbar-width: thin;
   scrollbar-color: #2a2a35 transparent;
 }
 
-.card--lista::-webkit-scrollbar { width: 4px; }
-.card--lista::-webkit-scrollbar-track { background: transparent; }
-.card--lista::-webkit-scrollbar-thumb { background: #2a2a35; border-radius: 4px; }
+.gastos-scroll::-webkit-scrollbar { width: 4px; }
+.gastos-scroll::-webkit-scrollbar-track { background: transparent; }
+.gastos-scroll::-webkit-scrollbar-thumb { background: #2a2a35; border-radius: 4px; }
+
+.separador {
+  border: none;
+  border-top: 1px solid #2a2a35;
+  margin: 0.75rem 0;
+}
 
 /* Tablet */
 @media (max-width: 1023px) {
@@ -57,5 +83,4 @@
   .app-header h1 { font-size: 1.35rem; }
   .app-header { margin-bottom: 1.25rem; }
   .layout { grid-template-columns: 1fr; gap: 1rem; }
-  .columna-derecha { gap: 1rem; }
 }

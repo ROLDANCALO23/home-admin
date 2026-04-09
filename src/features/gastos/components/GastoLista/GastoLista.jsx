@@ -1,4 +1,5 @@
 import CATEGORIAS from '../../constants/categorias'
+import { formatCOP } from '../../../../lib/formatCOP'
 import './GastoLista.css'
 
 function GastoLista({ gastos, onEliminar }) {
@@ -6,15 +7,6 @@ function GastoLista({ gastos, onEliminar }) {
 
   return (
     <>
-      <div className="lista-header">
-        <span className="card-title">Gastos</span>
-        {gastos.length > 0 && (
-          <span className="lista-count">
-            {gastos.length} {gastos.length === 1 ? 'item' : 'items'}
-          </span>
-        )}
-      </div>
-
       {gastos.length === 0 ? (
         <p className="empty">Aún no hay gastos registrados</p>
       ) : (
@@ -34,7 +26,7 @@ function GastoLista({ gastos, onEliminar }) {
                 </div>
               </div>
               <div className="gasto-derecha">
-                <span className="gasto-monto">${gasto.monto.toFixed(2)}</span>
+                <span className="gasto-monto">{formatCOP(gasto.monto)}</span>
                 <button className="btn-eliminar" onClick={() => onEliminar(gasto.id)}>✕</button>
               </div>
             </div>
