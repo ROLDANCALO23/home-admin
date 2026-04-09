@@ -1,6 +1,24 @@
+.pagina-fondo {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(135deg, #0f0f1a 0%, #1a1025 50%, #0a0f1a 100%);
+  background-size: cover;
+  background-position: center;
+  transition: background-image 0.4s ease;
+}
+
+.pagina-fondo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 15, 0.75);
+}
+
 .registro-gastos {
   max-width: 1100px;
   margin: 0 auto;
+  position: relative;
 }
 
 .app-header {
@@ -17,7 +35,7 @@
 
 .app-header p {
   font-size: 0.9rem;
-  color: #6b6b7e;
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .layout {
@@ -34,10 +52,16 @@
 
 .gastos-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.75rem;
   flex-shrink: 0;
   margin-bottom: 0.5rem;
+}
+
+.gastos-titulo-wrap {
+  position: relative;
+  flex-shrink: 0;
+  padding-top: 0.5rem;
 }
 
 .gastos-titulo {
@@ -45,7 +69,25 @@
   font-weight: 700;
   letter-spacing: 1.5px;
   color: #fff;
-  flex-shrink: 0;
+}
+
+.gastos-badge {
+  position: absolute;
+  top: -2px;
+  right: -14px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  background: #f97316;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-shadow: 0 0 8px rgba(249, 115, 22, 0.6);
 }
 
 .gastos-header .filtro-mes {

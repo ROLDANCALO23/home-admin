@@ -2,10 +2,15 @@ import { useState } from 'react'
 import CATEGORIAS from '../../constants/categorias'
 import './GastoForm.css'
 
-function GastoForm({ onAgregar }) {
+function GastoForm({ onAgregar, onCategoriaChange }) {
   const [descripcion, setDescripcion] = useState('')
   const [monto, setMonto] = useState('')
   const [categoria, setCategoria] = useState('')
+
+  const seleccionarCategoria = (valor) => {
+    setCategoria(valor)
+    onCategoriaChange?.(valor)
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -14,6 +19,7 @@ function GastoForm({ onAgregar }) {
     setDescripcion('')
     setMonto('')
     setCategoria('')
+    onCategoriaChange?.('')
   }
 
   return (
@@ -50,7 +56,7 @@ function GastoForm({ onAgregar }) {
               key={cat.valor}
               type="button"
               className={`categoria-btn ${categoria === cat.valor ? 'activa' : ''}`}
-              onClick={() => setCategoria(cat.valor)}
+              onClick={() => seleccionarCategoria(cat.valor)}
             >
               <span className="cat-emoji">{cat.emoji}</span>
               <span>{cat.label}</span>

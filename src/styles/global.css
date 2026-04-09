@@ -10,8 +10,7 @@
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background: #0f0f13;
-  color: #e2e2e8;
+  color: #fff;
   min-height: 100vh;
   padding: 2rem 1.5rem;
 }
@@ -33,10 +32,16 @@ body {
 
 /* ── Shared components ────────────────────────── */
 .card {
-  background: #18181f;
-  border: 1px solid #2a2a35;
+  background: rgba(20, 10, 40, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(160, 100, 255, 0.35);
   border-radius: 16px;
   padding: 1.5rem;
+  box-shadow:
+    0 0 0 1px rgba(160, 100, 255, 0.08),
+    0 0 18px rgba(140, 80, 255, 0.18),
+    0 4px 24px rgba(0, 0, 0, 0.45);
 }
 
 @media (max-width: 1023px) {
@@ -53,7 +58,7 @@ body {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #6b6b7e;
+  color: #fff;
   margin-bottom: 1rem;
 }
 
@@ -74,18 +79,18 @@ input[type="text"],
 input[type="number"] {
   width: 100%;
   padding: 0.65rem 0.9rem;
-  background: #0f0f13;
-  border: 1px solid #2a2a35;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(160, 100, 255, 0.3);
   border-radius: 10px;
-  color: #e2e2e8;
+  color: #fff;
   font-size: 0.95rem;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-input::placeholder { color: #3e3e50; }
+input::placeholder { color: rgba(255, 255, 255, 0.25); }
 
 input:focus {
-  border-color: #7c5cfc;
-  box-shadow: 0 0 0 3px rgba(124, 92, 252, 0.15);
+  border-color: rgba(160, 100, 255, 0.7);
+  box-shadow: 0 0 0 3px rgba(140, 80, 255, 0.15), 0 0 10px rgba(140, 80, 255, 0.2);
 }
