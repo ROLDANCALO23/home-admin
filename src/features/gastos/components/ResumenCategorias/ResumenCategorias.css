@@ -29,3 +29,15 @@
   color: #c4b5fd;
   flex-shrink: 0;
 }
+
+.resumen-total-general {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.4rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid #2a2a35;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+}

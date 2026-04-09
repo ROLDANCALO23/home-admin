@@ -9,6 +9,7 @@ function ResumenCategorias({ gastos }) {
   }, {})
 
   const categoriasConGasto = CATEGORIAS.filter((cat) => totales[cat.valor])
+  const totalGeneral = gastos.reduce((acc, g) => acc + Number(g.monto), 0)
 
   return (
     <div className="resumen-categorias">
@@ -19,6 +20,10 @@ function ResumenCategorias({ gastos }) {
           <span className="resumen-total">{formatCOP(totales[cat.valor])}</span>
         </div>
       ))}
+      <div className="resumen-total-general">
+        <span>Total</span>
+        <span>{formatCOP(totalGeneral)}</span>
+      </div>
     </div>
   )
 }
