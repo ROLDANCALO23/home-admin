@@ -50,6 +50,24 @@
 
 .cat-emoji { font-size: 1.2rem; }
 
+input[type="date"] {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(160, 100, 255, 0.3);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  color-scheme: dark;
+}
+
+input[type="date"]:focus {
+  border-color: rgba(160, 100, 255, 0.7);
+  box-shadow: 0 0 0 3px rgba(140, 80, 255, 0.15);
+}
+
 .btn-agregar {
   padding: 0.75rem;
   background: #7c5cfc;

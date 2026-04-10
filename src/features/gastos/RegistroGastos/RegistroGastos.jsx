@@ -4,6 +4,8 @@ import GastoLista from '../components/GastoLista'
 import ResumenCategorias from '../components/ResumenCategorias'
 import FiltroMes from '../components/FiltroMes'
 import ToastContainer from '../components/ToastContainer'
+import ConfirmDialog from '../../../components/ConfirmDialog'
+import GastoEditDialog from '../components/GastoEditDialog'
 import { supabase } from '../../../lib/supabase'
 import { useToast } from '../../../lib/useToast'
 import imgComida from '../../../assets/categorias/comida.jpg'
@@ -29,6 +31,8 @@ function RegistroGastos() {
   const [mesSeleccionado, setMesSeleccionado] = useState(new Date().getMonth())
   const [categoriaFondo, setCategoriaFondo] = useState('')
   const { toasts, addToast } = useToast()
+  const [confirmarId, setConfirmarId] = useState(null)
+  const [gastoEditando, setGastoEditando] = useState(null)
 
   useEffect(() => {
     supabase
@@ -41,7 +45,7 @@ function RegistroGastos() {
   }, [])
 
   const agregarGasto = async (gasto) => {
-    const nuevo = { ...gasto, id: Date.now(), fecha: new Date() }
+    const nuevo = { ...gasto, id: Date.now() }
     const { error } = await supabase.from('gastos').insert(nuevo)
     if (error) {
       addToast('No se pudo guardar el gasto', 'error')
@@ -51,7 +55,28 @@ function RegistroGastos() {
     }
   }
 
-  const eliminarGasto = async (id) => {
+  const editarGasto = async (gasto) => {
+    const { error } = await supabase
+      .from('gastos')
+      .update({
+        descripcion: gasto.descripcion,
+        monto: gasto.monto,
+        categoria: gasto.categoria,
+        fecha: gasto.fecha,
+      })
+      .eq('id', gasto.id)
+    if (error) {
+      addToast('No se pudo actualizar el gasto', 'error')
+    } else {
+      setGastos(gastos.map((g) => (g.id === gasto.id ? gasto : g)))
+      setGastoEditando(null)
+      addToast('Gasto actualizado', 'success')
+    }
+  }
+
+  const eliminarGasto = async () => {
+    const id = confirmarId
+    setConfirmarId(null)
     const { error } = await supabase.from('gastos').delete().eq('id', id)
     if (error) {
       addToast('No se pudo eliminar el gasto', 'error')
@@ -71,6 +96,20 @@ function RegistroGastos() {
   return (
     <div className="registro-gastos">
       <ToastContainer toasts={toasts} />
+      {gastoEditando && (
+        <GastoEditDialog
+          gasto={gastoEditando}
+          onGuardar={editarGasto}
+          onCancelar={() => setGastoEditando(null)}
+        />
+      )}
+      {confirmarId && (
+        <ConfirmDialog
+          mensaje="¿Estás seguro de que deseas eliminar este gasto?"
+          onConfirmar={eliminarGasto}
+          onCancelar={() => setConfirmarId(null)}
+        />
+      )}
       <div
         className="pagina-fondo"
         style={FONDOS[categoriaFondo] ? { backgroundImage: `url(${FONDOS[categoriaFondo]})` } : undefined}
@@ -100,7 +139,7 @@ function RegistroGastos() {
             />
           </div>
           <div className="gastos-scroll">
-            <GastoLista gastos={gastosFiltrados} onEliminar={eliminarGasto} />
+            <GastoLista gastos={gastosFiltrados} onEliminar={setConfirmarId} onEditar={setGastoEditando} />
           </div>
           {gastosFiltrados.length > 0 && (
             <>

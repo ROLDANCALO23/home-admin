@@ -1,0 +1,82 @@
+.tarea-lista {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tarea-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.85rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(160, 100, 255, 0.15);
+  border-radius: 10px;
+  cursor: grab;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+  user-select: none;
+}
+
+.tarea-item:active { cursor: grabbing; }
+
+.tarea-item.drag-over {
+  background: rgba(140, 80, 255, 0.15);
+  border-color: rgba(160, 100, 255, 0.6);
+  transform: scale(1.01);
+}
+
+.drag-handle {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.tarea-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.tarea-descripcion {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tarea-vencimiento {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.tarea-vencimiento.vencida {
+  color: #f97316;
+}
+
+.btn-eliminar {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.btn-eliminar:hover {
+  background: rgba(220, 50, 50, 0.15);
+  border-color: rgba(248, 113, 113, 0.4);
+  color: #f87171;
+}

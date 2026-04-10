@@ -1,0 +1,105 @@
+.edit-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fade-in 0.15s ease;
+}
+
+.edit-dialog {
+  background: rgba(20, 10, 40, 0.95);
+  border: 1px solid rgba(160, 100, 255, 0.4);
+  border-radius: 16px;
+  padding: 1.75rem;
+  box-shadow:
+    0 0 0 1px rgba(160, 100, 255, 0.1),
+    0 0 30px rgba(140, 80, 255, 0.2),
+    0 8px 40px rgba(0, 0, 0, 0.6);
+  width: 90%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #2a2a35 transparent;
+  animation: scale-in 0.2s ease;
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.edit-acciones {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.confirm-btn {
+  flex: 1;
+  padding: 0.65rem;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.confirm-btn--cancelar {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.confirm-btn--cancelar:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.confirm-btn--guardar {
+  background: rgba(124, 92, 252, 0.25);
+  border: 1px solid rgba(160, 100, 255, 0.5);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(140, 80, 255, 0.2);
+}
+
+.confirm-btn--guardar:hover {
+  background: rgba(124, 92, 252, 0.4);
+  border-color: rgba(160, 100, 255, 0.8);
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"] {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(160, 100, 255, 0.3);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  color-scheme: dark;
+}
+
+input:focus {
+  border-color: rgba(160, 100, 255, 0.7);
+  box-shadow: 0 0 0 3px rgba(140, 80, 255, 0.15);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}

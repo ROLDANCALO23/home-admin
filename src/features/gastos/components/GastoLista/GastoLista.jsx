@@ -2,7 +2,7 @@ import CATEGORIAS from '../../constants/categorias'
 import { formatCOP } from '../../../../lib/formatCOP'
 import './GastoLista.css'
 
-function GastoLista({ gastos, onEliminar }) {
+function GastoLista({ gastos, onEliminar, onEditar }) {
   const getCategoria = (valor) => CATEGORIAS.find((c) => c.valor === valor)
 
   return (
@@ -20,6 +20,7 @@ function GastoLista({ gastos, onEliminar }) {
                 {gasto.fecha.toLocaleDateString('es', { day: '2-digit', month: 'short', year: 'numeric' })}
               </span>
               <span className="gasto-monto">{formatCOP(gasto.monto)}</span>
+              <button className="btn-editar" onClick={() => onEditar(gasto)}>✎</button>
               <button className="btn-eliminar" onClick={() => onEliminar(gasto.id)}>✕</button>
             </div>
           )

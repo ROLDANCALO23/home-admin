@@ -39,6 +39,28 @@
   flex-shrink: 0;
 }
 
+.btn-editar {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.btn-editar:hover {
+  background: rgba(140, 80, 255, 0.15);
+  border-color: rgba(160, 100, 255, 0.4);
+  color: #c4b5fd;
+}
+
 .btn-eliminar {
   width: 28px;
   height: 28px;
@@ -65,4 +87,16 @@
   font-size: 0.9rem;
   text-align: center;
   padding: 2rem 0;
+}
+
+@media (max-width: 599px) {
+  .gasto-fecha { display: none; }
+
+  .gasto-monto {
+    font-size: 0.82rem;
+  }
+
+  .gasto-descripcion {
+    font-size: 0.83rem;
+  }
 }

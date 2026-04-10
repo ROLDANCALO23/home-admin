@@ -1,6 +1,25 @@
 /* ── Reset & base ─────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+html, body { overflow-x: hidden; }
+
+.pagina-fondo {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(135deg, #0f0f1a 0%, #1a1025 50%, #0a0f1a 100%);
+  background-size: cover;
+  background-position: center;
+  transition: background-image 0.4s ease;
+}
+
+.pagina-fondo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 15, 0.75);
+}
+
 /*
   Breakpoints:
   Mobile:  < 600px
@@ -12,15 +31,29 @@ body {
   font-family: 'Inter', system-ui, sans-serif;
   color: #fff;
   min-height: 100vh;
+}
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app-main {
+  flex: 1;
+  margin-left: 80px;
   padding: 2rem 1.5rem;
+  min-width: 0;
 }
 
 @media (max-width: 1023px) {
-  body { padding: 1.5rem 1.25rem; }
+  .app-main { padding: 1.5rem 1.25rem; }
 }
 
 @media (max-width: 599px) {
-  body { padding: 1rem 0.85rem; }
+  .app-main {
+    margin-left: 0;
+    padding: 3.5rem 0.85rem 1rem;
+  }
 }
 
 #root {

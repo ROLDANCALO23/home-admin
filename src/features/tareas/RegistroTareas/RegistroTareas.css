@@ -1,0 +1,17 @@
+.registro-tareas {
+  max-width: 1100px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.card--tareas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tareas-header {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
