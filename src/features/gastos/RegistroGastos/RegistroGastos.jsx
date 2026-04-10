@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import GastoForm from '../components/GastoForm'
 import GastoLista from '../components/GastoLista'
 import ResumenCategorias from '../components/ResumenCategorias'
-import FiltroMes from '../components/FiltroMes'
+import FiltroRango from '../components/FiltroRango'
 import ToastContainer from '../components/ToastContainer'
 import ConfirmDialog from '../../../components/ConfirmDialog'
 import GastoEditDialog from '../components/GastoEditDialog'
@@ -27,8 +27,8 @@ const FONDOS = {
 
 function RegistroGastos() {
   const [gastos, setGastos] = useState([])
-  const [anioSeleccionado, setAnioSeleccionado] = useState(new Date().getFullYear())
-  const [mesSeleccionado, setMesSeleccionado] = useState(new Date().getMonth())
+  const [desde, setDesde] = useState('')
+  const [hasta, setHasta] = useState('')
   const [categoriaFondo, setCategoriaFondo] = useState('')
   const { toasts, addToast } = useToast()
   const [confirmarId, setConfirmarId] = useState(null)
@@ -88,8 +88,8 @@ function RegistroGastos() {
 
   const gastosFiltrados = gastos.filter((g) => {
     const fecha = new Date(g.fecha)
-    if (anioSeleccionado && fecha.getFullYear() !== anioSeleccionado) return false
-    if (mesSeleccionado !== null && fecha.getMonth() !== mesSeleccionado) return false
+    if (desde && fecha < new Date(desde + 'T00:00:00')) return false
+    if (hasta && fecha > new Date(hasta + 'T23:59:59')) return false
     return true
   })
 
@@ -130,12 +130,11 @@ function RegistroGastos() {
                 <span className="gastos-badge">{gastosFiltrados.length}</span>
               )}
             </div>
-            <FiltroMes
-              gastos={gastos}
-              anioSeleccionado={anioSeleccionado}
-              mesSeleccionado={mesSeleccionado}
-              onChangeAnio={setAnioSeleccionado}
-              onChangeMes={setMesSeleccionado}
+            <FiltroRango
+              desde={desde}
+              hasta={hasta}
+              onChangeDe={setDesde}
+              onChangeHasta={setHasta}
             />
           </div>
           <div className="gastos-scroll">

@@ -90,13 +90,55 @@
 }
 
 @media (max-width: 599px) {
-  .gasto-fecha { display: none; }
+  .gasto-item {
+    display: grid;
+    grid-template-columns: 1.4rem 1fr auto auto;
+    grid-template-rows: auto auto;
+    column-gap: 0.45rem;
+    row-gap: 0.1rem;
+    align-items: center;
+  }
 
-  .gasto-monto {
-    font-size: 0.82rem;
+  .gasto-cat-emoji {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    align-self: center;
   }
 
   .gasto-descripcion {
+    grid-column: 2;
+    grid-row: 1;
     font-size: 0.83rem;
+  }
+
+  .gasto-fecha {
+    grid-column: 2;
+    grid-row: 2;
+    display: block;
+    font-size: 0.68rem;
+  }
+
+  .gasto-monto {
+    grid-column: 3 / 5;
+    grid-row: 1;
+    font-size: 0.8rem;
+    text-align: right;
+  }
+
+  .btn-editar {
+    grid-column: 3;
+    grid-row: 2;
+    width: 22px;
+    height: 22px;
+    font-size: 0.7rem;
+    justify-self: end;
+  }
+
+  .btn-eliminar {
+    grid-column: 4;
+    grid-row: 2;
+    width: 22px;
+    height: 22px;
+    font-size: 0.7rem;
   }
 }

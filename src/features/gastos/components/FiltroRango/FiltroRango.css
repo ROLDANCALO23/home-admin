@@ -1,0 +1,44 @@
+.filtro-rango {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.filtro-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+}
+
+.filtro-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+input[type="date"] {
+  width: 100%;
+  padding: 0.45rem 0.75rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(160, 100, 255, 0.25);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.85rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  color-scheme: dark;
+}
+
+input[type="date"]:focus {
+  border-color: rgba(160, 100, 255, 0.7);
+  box-shadow: 0 0 0 3px rgba(140, 80, 255, 0.15);
+}
+
+@media (max-width: 599px) {
+  .filtro-rango {
+    flex-direction: column;
+  }
+}

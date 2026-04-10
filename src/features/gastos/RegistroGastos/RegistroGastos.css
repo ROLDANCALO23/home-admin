@@ -75,11 +75,12 @@
   box-shadow: 0 0 8px rgba(249, 115, 22, 0.6);
 }
 
-.gastos-header .filtro-mes {
+.gastos-header .filtro-rango {
   flex-shrink: 0;
 }
 
 .gastos-scroll {
+  overflow-x: hidden;
   overflow-y: auto;
   flex: 1;
   max-height: 340px;
@@ -113,16 +114,18 @@
   .gastos-header {
     flex-wrap: wrap;
     gap: 0.5rem;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
   }
 
-  .gastos-header .filtro-mes {
-    margin-left: 0;
+  .gastos-titulo-wrap {
+    width: 100%;
+  }
+
+  .gastos-header .filtro-rango {
+    width: 100%;
+    flex-shrink: 1;
   }
 
   .gastos-scroll {
-    max-height: 280px;
+    max-height: 260px;
   }
 }
