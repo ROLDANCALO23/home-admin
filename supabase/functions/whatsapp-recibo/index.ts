@@ -126,6 +126,8 @@ Deno.serve(async (req: Request) => {
     // ── Caso 2: imagen o texto → llamar a Claude con tool use ──
     let claudeContent: unknown[]
 
+    const hoy = new Date().toISOString().split('T')[0]
+
     if (mediaUrl) {
       const accountSid = Deno.env.get('TWILIO_ACCOUNT_SID')!
       const authToken  = Deno.env.get('TWILIO_AUTH_TOKEN')!
@@ -148,11 +150,11 @@ Deno.serve(async (req: Request) => {
           type: 'image',
           source: { type: 'base64', media_type: mediaType, data: imgBase64 },
         },
-        { type: 'text', text: 'Extrae los datos del gasto de este recibo.' },
+        { type: 'text', text: `Extrae los datos del gasto de este recibo. Fecha de hoy: ${hoy}.` },
       ]
     } else if (body) {
       claudeContent = [
-        { type: 'text', text: `Extrae los datos del gasto de este mensaje: "${body}"` },
+        { type: 'text', text: `Extrae los datos del gasto de este mensaje: "${body}". Fecha de hoy: ${hoy}.` },
       ]
     } else {
       return twimlResponse(
