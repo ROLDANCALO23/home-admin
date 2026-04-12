@@ -50,13 +50,44 @@
   text-overflow: ellipsis;
 }
 
-.tarea-vencimiento {
-  font-size: 0.75rem;
+.tarea-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.tarea-responsable,
+.tarea-vencimiento,
+.tarea-alarmas {
+  font-size: 0.72rem;
   color: rgba(255, 255, 255, 0.4);
 }
 
 .tarea-vencimiento.vencida {
   color: #f97316;
+}
+
+.btn-editar {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.btn-editar:hover {
+  background: rgba(124, 92, 252, 0.15);
+  border-color: rgba(160, 100, 255, 0.5);
+  color: #c4b5fd;
 }
 
 .btn-eliminar {

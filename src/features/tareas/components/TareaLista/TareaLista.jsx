@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import './TareaLista.css'
 
-function TareaLista({ tareas, onEliminar, onReordenar }) {
+function TareaLista({ tareas, onEliminar, onReordenar, onEditar }) {
   const dragIndex = useRef(null)
   const [draggingOver, setDraggingOver] = useState(null)
 
@@ -58,13 +58,24 @@ function TareaLista({ tareas, onEliminar, onReordenar }) {
             <span className="drag-handle">⠿</span>
             <div className="tarea-info">
               <span className="tarea-descripcion">{tarea.descripcion}</span>
-              {tarea.fecha_vencimiento && (
-                <span className={`tarea-vencimiento ${vencida ? 'vencida' : ''}`}>
-                  {vencida ? '⚠ ' : ''}
-                  {formatFecha(tarea.fecha_vencimiento)}
-                </span>
-              )}
+              <div className="tarea-meta">
+                {tarea.responsable && (
+                  <span className="tarea-responsable">👤 {tarea.responsable}</span>
+                )}
+                {tarea.fecha_vencimiento && (
+                  <span className={`tarea-vencimiento ${vencida ? 'vencida' : ''}`}>
+                    {vencida ? '⚠ ' : '📅 '}
+                    {formatFecha(tarea.fecha_vencimiento)}
+                  </span>
+                )}
+                {tarea.recordatorios?.length > 0 && (
+                  <span className="tarea-alarmas">
+                    🔔 {tarea.recordatorios.length}
+                  </span>
+                )}
+              </div>
             </div>
+            <button className="btn-editar" onClick={() => onEditar(tarea)}>✎</button>
             <button className="btn-eliminar" onClick={() => onEliminar(tarea.id)}>✕</button>
           </li>
         )

@@ -27,8 +27,12 @@ const FONDOS = {
 
 function RegistroGastos() {
   const [gastos, setGastos] = useState([])
-  const [desde, setDesde] = useState('')
-  const [hasta, setHasta] = useState('')
+  const hoy = new Date()
+  const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1).toISOString().split('T')[0]
+  const hoyStr = hoy.toISOString().split('T')[0]
+
+  const [desde, setDesde] = useState(primerDiaMes)
+  const [hasta, setHasta] = useState(hoyStr)
   const [categoriaFondo, setCategoriaFondo] = useState('')
   const { toasts, addToast } = useToast()
   const [confirmarId, setConfirmarId] = useState(null)
@@ -86,12 +90,14 @@ function RegistroGastos() {
     }
   }
 
-  const gastosFiltrados = gastos.filter((g) => {
-    const fecha = new Date(g.fecha)
-    if (desde && fecha < new Date(desde + 'T00:00:00')) return false
-    if (hasta && fecha > new Date(hasta + 'T23:59:59')) return false
-    return true
-  })
+  const gastosFiltrados = gastos
+    .filter((g) => {
+      const fecha = new Date(g.fecha)
+      if (desde && fecha < new Date(desde + 'T00:00:00')) return false
+      if (hasta && fecha > new Date(hasta + 'T23:59:59')) return false
+      return true
+    })
+    .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
 
   return (
     <div className="registro-gastos">

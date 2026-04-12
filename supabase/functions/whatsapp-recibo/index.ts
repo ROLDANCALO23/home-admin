@@ -13,10 +13,17 @@ const OPCIONES_CATEGORIA = CATEGORIAS
   .map((c, i) => `${i + 1}. ${c.emoji} ${c.label}`)
   .join('\n')
 
-const SYSTEM_PROMPT = `Eres un asistente especializado en registrar gastos del hogar en Colombia.
-Recibes fotos de recibos o mensajes de texto y extraes los datos del gasto.
+const SYSTEM_PROMPT = `Eres un asistente personal que registra gastos y tareas del hogar en Colombia.
 
-Categorías válidas:
+## Cuándo registrar una TAREA
+Si el mensaje empieza con "tarea:" o menciona algo pendiente por hacer (llamar, comprar, ir a, agendar, recordar, pagar, etc.) → usa registrar_tarea.
+Ejemplos: "tarea: llamar al médico", "recordar pagar el arriendo el viernes", "comprar comida para los perros"
+
+## Cuándo registrar un GASTO
+Si el mensaje tiene un monto o es una foto de recibo → usa registrar_gasto o solicitar_categoria.
+Ejemplos: "almuerzo 35000", "25k uber", foto de recibo
+
+## Categorías de gastos válidas:
 - comida → restaurantes, domicilios, mercado, cafés, snacks
 - transporte → Uber, taxi, bus, gasolina, peajes, parqueadero
 - entretenimiento → Netflix, cine, conciertos, juegos, salidas
@@ -24,14 +31,12 @@ Categorías válidas:
 - hogar → arriendo, servicios públicos, reparaciones, muebles, limpieza
 - perros → veterinario, comida para mascotas, accesorios
 
-Reglas:
-- Los montos son siempre en pesos colombianos (COP). Si ves "$" asume COP.
+## Reglas generales:
+- Montos siempre en COP. Si ves "$" asume pesos colombianos.
 - "15k" o "15mil" = 15000.
 - Si no mencionan fecha asume hoy.
-- Siempre debes llamar una herramienta, nunca respondas con texto libre.
-- Usa registrar_gasto cuando estés seguro de todos los datos incluida la categoría.
-- Usa solicitar_categoria cuando tengas duda sobre la categoría.
-- Usa reportar_error cuando no puedas extraer los datos.`
+- Siempre llama una herramienta, nunca respondas con texto libre.
+- Usa reportar_error solo si no puedes entender el mensaje.`
 
 const TOOLS = [
   {
@@ -59,6 +64,18 @@ const TOOLS = [
         fecha:       { type: 'string', description: 'Fecha en formato YYYY-MM-DD' },
       },
       required: ['descripcion', 'monto', 'fecha'],
+    },
+  },
+  {
+    name: 'registrar_tarea',
+    description: 'Registra una tarea o pendiente cuando el mensaje no tiene monto sino algo por hacer.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        descripcion:       { type: 'string', description: 'Qué hay que hacer (máx 120 chars)' },
+        fecha_vencimiento: { type: 'string', description: 'Fecha límite en formato YYYY-MM-DD. Omitir si no se menciona.' },
+      },
+      required: ['descripcion'],
     },
   },
   {
@@ -190,6 +207,30 @@ Deno.serve(async (req: Request) => {
     }
 
     const { name, input } = toolBlock
+
+    // ── registrar_tarea ──
+    if (name === 'registrar_tarea') {
+      const { data: ultimasTareas } = await supabase
+        .from('tareas')
+        .select('orden')
+        .order('orden', { ascending: false })
+        .limit(1)
+
+      const siguienteOrden = ultimasTareas?.[0]?.orden != null ? ultimasTareas[0].orden + 1 : 0
+
+      const { error } = await supabase.from('tareas').insert({
+        id:                Date.now(),
+        descripcion:       String(input.descripcion).slice(0, 120),
+        fecha_vencimiento: input.fecha_vencimiento ?? null,
+        fecha_registro:    new Date().toISOString(),
+        orden:             siguienteOrden,
+      })
+
+      if (error) return twimlResponse('Error al guardar la tarea. Intenta de nuevo.')
+
+      const fechaMsg = input.fecha_vencimiento ? `\n📅 Vence: ${input.fecha_vencimiento}` : ''
+      return twimlResponse(`📋 Tarea registrada:\n*${input.descripcion}*${fechaMsg}`)
+    }
 
     // ── registrar_gasto: Claude está seguro de todo ──
     if (name === 'registrar_gasto') {
