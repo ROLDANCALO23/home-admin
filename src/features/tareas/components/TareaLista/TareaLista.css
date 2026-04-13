@@ -16,6 +16,8 @@
   cursor: grab;
   transition: background 0.15s, border-color 0.15s, transform 0.15s;
   user-select: none;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .tarea-item:active { cursor: grabbing; }
@@ -62,6 +64,21 @@
 .tarea-alarmas {
   font-size: 0.72rem;
   color: rgba(255, 255, 255, 0.4);
+}
+
+@media (max-width: 599px) {
+  .tarea-item {
+    gap: 0.5rem;
+    padding: 0.65rem 0.65rem;
+  }
+
+  .drag-handle {
+    display: none;
+  }
+
+  .tarea-descripcion {
+    font-size: 0.85rem;
+  }
 }
 
 .tarea-vencimiento.vencida {

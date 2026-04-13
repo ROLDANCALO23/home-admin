@@ -19,6 +19,13 @@ const SYSTEM_PROMPT = `Eres un asistente personal que registra gastos y tareas d
 Si el mensaje empieza con "tarea:" o menciona algo pendiente por hacer (llamar, comprar, ir a, agendar, recordar, pagar, etc.) → usa registrar_tarea.
 Ejemplos: "tarea: llamar al médico", "recordar pagar el arriendo el viernes", "comprar comida para los perros"
 
+## Recordatorios en tareas
+Si el mensaje menciona una hora de aviso o alarma, incluye el campo recordatorios.
+- "recuérdame mañana a las 3pm" → recordatorio con fecha_hora del día siguiente a las 15:00 hora Colombia
+- "avísame todos los días a las 8am" → recordatorio con loop: true
+- "pon alarma para el viernes a las 10am" → recordatorio con fecha_hora del próximo viernes a las 10:00
+- Las horas siempre en formato Colombia (UTC-5): YYYY-MM-DDTHH:mm:00-05:00
+
 ## Cuándo registrar un GASTO
 Si el mensaje tiene un monto o es una foto de recibo → usa registrar_gasto o solicitar_categoria.
 Ejemplos: "almuerzo 35000", "25k uber", foto de recibo
@@ -74,6 +81,18 @@ const TOOLS = [
       properties: {
         descripcion:       { type: 'string', description: 'Qué hay que hacer (máx 120 chars)' },
         fecha_vencimiento: { type: 'string', description: 'Fecha límite en formato YYYY-MM-DD. Omitir si no se menciona.' },
+        recordatorios: {
+          type: 'array',
+          description: 'Lista de recordatorios/alarmas para esta tarea. Omitir si no se menciona hora.',
+          items: {
+            type: 'object',
+            properties: {
+              fecha_hora: { type: 'string', description: 'Fecha y hora en formato YYYY-MM-DDTHH:mm:00-05:00 (hora Colombia UTC-5)' },
+              loop:       { type: 'boolean', description: 'true si el usuario pide que se repita todos los días a esa hora' },
+            },
+            required: ['fecha_hora', 'loop'],
+          },
+        },
       },
       required: ['descripcion'],
     },
@@ -218,8 +237,9 @@ Deno.serve(async (req: Request) => {
 
       const siguienteOrden = ultimasTareas?.[0]?.orden != null ? ultimasTareas[0].orden + 1 : 0
 
+      const tareaId = Date.now()
       const { error } = await supabase.from('tareas').insert({
-        id:                Date.now(),
+        id:                tareaId,
         descripcion:       String(input.descripcion).slice(0, 120),
         fecha_vencimiento: input.fecha_vencimiento ?? null,
         fecha_registro:    new Date().toISOString(),
@@ -228,8 +248,23 @@ Deno.serve(async (req: Request) => {
 
       if (error) return twimlResponse('Error al guardar la tarea. Intenta de nuevo.')
 
+      // Insertar recordatorios si los hay
+      if (Array.isArray(input.recordatorios) && input.recordatorios.length > 0) {
+        await supabase.from('recordatorios').insert(
+          input.recordatorios.map((r: { fecha_hora: string; loop: boolean }) => ({
+            tarea_id:  tareaId,
+            fecha_hora: r.fecha_hora,
+            loop:       r.loop ?? false,
+            enviado:    false,
+          }))
+        )
+      }
+
       const fechaMsg = input.fecha_vencimiento ? `\n📅 Vence: ${input.fecha_vencimiento}` : ''
-      return twimlResponse(`📋 Tarea registrada:\n*${input.descripcion}*${fechaMsg}`)
+      const recMsg   = input.recordatorios?.length
+        ? `\n🔔 ${input.recordatorios.length} recordatorio(s) programado(s)`
+        : ''
+      return twimlResponse(`📋 Tarea registrada:\n*${input.descripcion}*${fechaMsg}${recMsg}`)
     }
 
     // ── registrar_gasto: Claude está seguro de todo ──

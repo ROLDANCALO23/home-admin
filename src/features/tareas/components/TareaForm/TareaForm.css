@@ -96,8 +96,10 @@
 }
 
 input[type="date"],
-input[type="datetime-local"] {
+input[type="datetime-local"],
+input[type="time"] {
   width: 100%;
+  min-width: 0;
   padding: 0.65rem 0.9rem;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(160, 100, 255, 0.3);
@@ -109,8 +111,25 @@ input[type="datetime-local"] {
   color-scheme: dark;
 }
 
+input[type="time"] {
+  max-width: 130px;
+}
+
+@media (max-width: 599px) {
+  .recordatorio-item {
+    flex-wrap: wrap;
+  }
+
+  .recordatorio-item input[type="datetime-local"],
+  .recordatorio-item input[type="time"] {
+    font-size: 0.82rem;
+    padding: 0.5rem 0.6rem;
+  }
+}
+
 input[type="date"]:focus,
-input[type="datetime-local"]:focus {
+input[type="datetime-local"]:focus,
+input[type="time"]:focus {
   border-color: rgba(160, 100, 255, 0.7);
   box-shadow: 0 0 0 3px rgba(140, 80, 255, 0.15);
 }

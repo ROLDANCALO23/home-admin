@@ -1,6 +1,16 @@
 import { useState } from 'react'
 import './TareaEditDialog.css'
 
+function horaAFechaHora(hora) {
+  if (!hora) return ''
+  const ahora = new Date()
+  const [h, m] = hora.split(':').map(Number)
+  const candidato = new Date(ahora)
+  candidato.setHours(h, m, 0, 0)
+  if (candidato <= ahora) candidato.setDate(candidato.getDate() + 1)
+  return candidato.toISOString().slice(0, 16)
+}
+
 function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
   const [descripcion, setDescripcion] = useState(tarea.descripcion)
   const [responsable, setResponsable] = useState(tarea.responsable ?? '')
@@ -8,7 +18,8 @@ function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
   const [recordatorios, setRecordatorios] = useState(
     (tarea.recordatorios ?? []).map(r => ({
       ...r,
-      fecha_hora: r.fecha_hora ? r.fecha_hora.slice(0, 16) : '',
+      fecha_hora: r.loop ? '' : (r.fecha_hora ? r.fecha_hora.slice(0, 16) : ''),
+      hora: r.loop && r.fecha_hora ? new Date(r.fecha_hora).toTimeString().slice(0, 5) : '',
       loop: r.loop ?? false,
       esExistente: true,
     }))
@@ -36,7 +47,12 @@ function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
       descripcion: descripcion.trim(),
       responsable: responsable.trim() || null,
       fecha_vencimiento: fechaVencimiento || null,
-      recordatorios: recordatorios.filter(r => r.fecha_hora),
+      recordatorios: recordatorios
+        .map(r => ({
+          ...r,
+          fecha_hora: r.loop ? horaAFechaHora(r.hora) : r.fecha_hora,
+        }))
+        .filter(r => r.fecha_hora),
     })
   }
 
@@ -83,16 +99,35 @@ function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
             </div>
             {recordatorios.map((r, i) => (
               <div key={i} className="recordatorio-item">
-                <input
-                  type="datetime-local"
-                  value={r.fecha_hora}
-                  onChange={(e) => actualizarRecordatorio(i, 'fecha_hora', e.target.value)}
-                />
+                {r.loop ? (
+                  <input
+                    type="time"
+                    value={r.hora ?? ''}
+                    onChange={(e) => actualizarRecordatorio(i, 'hora', e.target.value)}
+                  />
+                ) : (
+                  <input
+                    type="datetime-local"
+                    value={r.fecha_hora}
+                    onChange={(e) => actualizarRecordatorio(i, 'fecha_hora', e.target.value)}
+                  />
+                )}
                 <label className="loop-label">
                   <input
                     type="checkbox"
                     checked={r.loop ?? false}
-                    onChange={(e) => actualizarRecordatorio(i, 'loop', e.target.checked)}
+                    onChange={(e) => {
+                      const checked = e.target.checked
+                      const nuevos = [...recordatorios]
+                      nuevos[i] = {
+                        ...nuevos[i],
+                        loop: checked,
+                        hora: checked && nuevos[i].fecha_hora
+                          ? new Date(nuevos[i].fecha_hora).toTimeString().slice(0, 5)
+                          : nuevos[i].hora,
+                      }
+                      setRecordatorios(nuevos)
+                    }}
                   />
                   Diario
                 </label>

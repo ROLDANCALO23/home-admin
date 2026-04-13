@@ -23,7 +23,7 @@ function Sidebar({ paginaActual, onChangePagina }) {
       {abierto && <div className="sidebar-overlay" onClick={() => setAbierto(false)} />}
 
       <nav className={`sidebar ${abierto ? 'sidebar--abierto' : ''}`}>
-        <div className="sidebar-logo">HA</div>
+        <div className="sidebar-logo">💜</div>
         <ul className="sidebar-nav">
           {PAGES.map((page) => (
             <li key={page.id}>
