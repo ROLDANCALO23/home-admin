@@ -111,6 +111,17 @@
   text-transform: uppercase;
 }
 
+.sidebar-bottom {
+  margin-top: auto;
+  width: 100%;
+  padding: 0 0.75rem;
+}
+
+.sidebar-bell:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
 @media (max-width: 599px) {
   .hamburger {
     display: flex;

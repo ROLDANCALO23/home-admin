@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { usePushNotifications } from '../../lib/usePushNotifications'
 import './Sidebar.css'
 
 const PAGES = [
@@ -6,13 +7,24 @@ const PAGES = [
   { id: 'tareas', label: 'Tareas', icon: '📋' },
 ]
 
+const BELL_LABELS = {
+  idle: { icon: '🔔', label: 'Activar' },
+  solicitando: { icon: '🔔', label: '...' },
+  activo: { icon: '🔔', label: 'Activo' },
+  denegado: { icon: '🔕', label: 'Bloqueado' },
+  'no-soportado': { icon: '🔕', label: 'N/D' },
+}
+
 function Sidebar({ paginaActual, onChangePagina }) {
   const [abierto, setAbierto] = useState(false)
+  const { estado, activar } = usePushNotifications()
 
   const handleNavegar = (id) => {
     onChangePagina(id)
     setAbierto(false)
   }
+
+  const bell = BELL_LABELS[estado] ?? BELL_LABELS.idle
 
   return (
     <>
@@ -37,6 +49,18 @@ function Sidebar({ paginaActual, onChangePagina }) {
             </li>
           ))}
         </ul>
+
+        <div className="sidebar-bottom">
+          <button
+            className={`sidebar-item sidebar-bell ${estado === 'activo' ? 'activo' : ''}`}
+            onClick={activar}
+            disabled={estado === 'activo' || estado === 'denegado' || estado === 'no-soportado'}
+            title={estado === 'denegado' ? 'Notificaciones bloqueadas en el navegador' : ''}
+          >
+            <span className="sidebar-icon">{bell.icon}</span>
+            <span className="sidebar-label">{bell.label}</span>
+          </button>
+        </div>
       </nav>
     </>
   )
