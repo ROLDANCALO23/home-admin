@@ -6,7 +6,6 @@ import FiltroRango from '../components/FiltroRango'
 import ToastContainer from '../components/ToastContainer'
 import ConfirmDialog from '../../../components/ConfirmDialog'
 import GastoEditDialog from '../components/GastoEditDialog'
-import CategoriasPage from '../components/CategoriasPage'
 import { supabase } from '../../../lib/supabase'
 import { useToast } from '../../../lib/useToast'
 import './RegistroGastos.css'
@@ -14,7 +13,6 @@ import './RegistroGastos.css'
 function RegistroGastos() {
   const [gastos, setGastos] = useState([])
   const [categorias, setCategorias] = useState([])
-  const [tab, setTab] = useState('registro')
   const hoy = new Date()
   const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1).toISOString().split('T')[0]
   const hoyStr = hoy.toISOString().split('T')[0]
@@ -126,64 +124,46 @@ function RegistroGastos() {
         <p>Controla tus gastos y organízalos por categoría</p>
       </div>
 
-      <div className="gastos-tabs">
-        <button
-          className={`gastos-tab ${tab === 'registro' ? 'activo' : ''}`}
-          onClick={() => setTab('registro')}
-        >
-          Registro
-        </button>
-        <button
-          className={`gastos-tab ${tab === 'categorias' ? 'activo' : ''}`}
-          onClick={() => setTab('categorias')}
-        >
-          Categorías
-        </button>
-      </div>
-
-      {tab === 'registro' ? (
-        <div className="layout">
-          <div className="card">
-            <GastoForm
-              categorias={categorias}
-              onAgregar={agregarGasto}
-              onCategoriaChange={setCategoriaSeleccionada}
+      <div className="layout">
+        <div className="card">
+          <GastoForm
+            categorias={categorias}
+            onAgregar={agregarGasto}
+            onCategoriaChange={setCategoriaSeleccionada}
+            onCambioCategorias={cargarCategorias}
+          />
+        </div>
+        <div className="card card--gastos">
+          <div className="gastos-header">
+            <div className="gastos-titulo-wrap">
+              <span className="gastos-titulo">GASTOS</span>
+              {gastosFiltrados.length > 0 && (
+                <span className="gastos-badge">{gastosFiltrados.length}</span>
+              )}
+            </div>
+            <FiltroRango
+              desde={desde}
+              hasta={hasta}
+              onChangeDe={setDesde}
+              onChangeHasta={setHasta}
             />
           </div>
-          <div className="card card--gastos">
-            <div className="gastos-header">
-              <div className="gastos-titulo-wrap">
-                <span className="gastos-titulo">GASTOS</span>
-                {gastosFiltrados.length > 0 && (
-                  <span className="gastos-badge">{gastosFiltrados.length}</span>
-                )}
-              </div>
-              <FiltroRango
-                desde={desde}
-                hasta={hasta}
-                onChangeDe={setDesde}
-                onChangeHasta={setHasta}
-              />
-            </div>
-            <div className="gastos-scroll">
-              <GastoLista
-                gastos={gastosFiltrados}
-                categorias={categorias}
-                onEliminar={setConfirmarId}
-                onEditar={setGastoEditando}
-              />
-            </div>
-            {gastosFiltrados.length > 0 && (
-              <>
-                <hr className="separador" />
-                <ResumenCategorias gastos={gastosFiltrados} categorias={categorias} />
-              </>
-            )}
+          <div className="gastos-scroll">
+            <GastoLista
+              gastos={gastosFiltrados}
+              categorias={categorias}
+              onEliminar={setConfirmarId}
+              onEditar={setGastoEditando}
+            />
           </div>
+          {gastosFiltrados.length > 0 && (
+            <>
+              <hr className="separador" />
+              <ResumenCategorias gastos={gastosFiltrados} categorias={categorias} />
+            </>
+          )}
         </div>
-      ) : (
-        <CategoriasPage categorias={categorias} onCambio={cargarCategorias} />
-      )}
+      </div>
     </div>
   )
 }

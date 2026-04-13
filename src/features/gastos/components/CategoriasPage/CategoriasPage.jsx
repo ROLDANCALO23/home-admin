@@ -13,7 +13,51 @@ function slugify(label) {
 
 const COLORES = ['#f97316', '#3b82f6', '#a855f7', '#22c55e', '#eab308', '#ec4899', '#14b8a6', '#ef4444']
 
+const EMOJIS = [
+  '🍔','🍕','🍜','🥗','🍱','🥤','☕','🍺','🛒','🥩',
+  '🚗','🚕','🛵','✈️','🚌','⛽','🅿️','🚲','🛺','🚂',
+  '🎬','🎮','🎵','🎭','📺','🎲','⚽','🏋️','🎸','🧩',
+  '💊','🏥','🦷','👓','💉','🧬','🩺','🧘','🏃','💆',
+  '🏠','💡','🪣','🛋️','🪴','🔧','🧹','🛁','🪟','🗑️',
+  '🐶','🐱','🐰','🐟','🐦','🐾','🦮','🐕','🐈','🪺',
+  '👕','👟','👜','💄','💍','🧴','🪒','🧺','🛍️','👔',
+  '📚','🖥️','📱','⌚','🎓','✏️','📎','🖨️','🔋','💾',
+  '💰','🏦','📊','💳','🧾','💸','📈','🪙','🏧','💹',
+  '🎁','🎂','🥳','🎊','🎉','🌹','💐','🪅','🎈','🧨',
+]
+
 const VACIO = { emoji: '', label: '', valor: '', color: COLORES[0] }
+
+function EmojiPicker({ value, onSelect }) {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <div className="emoji-picker-wrap">
+      <button
+        type="button"
+        className="emoji-trigger"
+        onClick={() => setOpen(o => !o)}
+        title="Elegir icono"
+      >
+        {value || '＋'}
+      </button>
+      {open && (
+        <div className="emoji-dropdown">
+          {EMOJIS.map(e => (
+            <button
+              key={e}
+              type="button"
+              className={`emoji-opt ${value === e ? 'activo' : ''}`}
+              onClick={() => { onSelect(e); setOpen(false) }}
+            >
+              {e}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 function CategoriaForm({ inicial, onGuardar, onCancelar, esNueva }) {
   const [datos, setDatos] = useState(inicial)
@@ -28,21 +72,14 @@ function CategoriaForm({ inicial, onGuardar, onCancelar, esNueva }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (!datos.emoji.trim() || !datos.label.trim() || !datos.valor.trim()) return
+    if (!datos.emoji || !datos.label.trim() || !datos.valor.trim()) return
     onGuardar(datos)
   }
 
   return (
     <form className="cat-form" onSubmit={handleSubmit}>
       <div className="cat-form-fila">
-        <input
-          className="cat-input cat-input--emoji"
-          type="text"
-          placeholder="🍔"
-          value={datos.emoji}
-          maxLength={4}
-          onChange={(e) => set('emoji', e.target.value)}
-        />
+        <EmojiPicker value={datos.emoji} onSelect={(e) => set('emoji', e)} />
         <input
           className="cat-input cat-input--label"
           type="text"
@@ -90,7 +127,7 @@ function CategoriasPage({ categorias, onCambio }) {
   const agregarCategoria = async (datos) => {
     const maxOrden = categorias.reduce((m, c) => Math.max(m, c.orden ?? 0), -1)
     const { error } = await supabase.from('categorias').insert({
-      emoji: datos.emoji.trim(),
+      emoji: datos.emoji,
       label: datos.label.trim(),
       valor: datos.valor.trim(),
       color: datos.color,
@@ -105,7 +142,7 @@ function CategoriasPage({ categorias, onCambio }) {
   const editarCategoria = async (datos) => {
     const { error } = await supabase
       .from('categorias')
-      .update({ emoji: datos.emoji.trim(), label: datos.label.trim(), color: datos.color })
+      .update({ emoji: datos.emoji, label: datos.label.trim(), color: datos.color })
       .eq('id', datos.id)
     if (!error) {
       setEditandoId(null)
@@ -153,10 +190,7 @@ function CategoriasPage({ categorias, onCambio }) {
               />
             ) : (
               <>
-                <span
-                  className="cat-item-dot"
-                  style={{ background: cat.color }}
-                />
+                <span className="cat-item-dot" style={{ background: cat.color }} />
                 <span className="cat-item-emoji">{cat.emoji}</span>
                 <span className="cat-item-label">{cat.label}</span>
                 <span className="cat-item-valor">{cat.valor}</span>
