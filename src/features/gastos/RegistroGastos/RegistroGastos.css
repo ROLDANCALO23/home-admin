@@ -98,6 +98,34 @@
   margin: 0.75rem 0;
 }
 
+/* Tabs */
+.gastos-tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 1.25rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 4px;
+  width: fit-content;
+}
+
+.gastos-tab {
+  padding: 0.4rem 1.1rem;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.gastos-tab.activo {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
 /* Tablet */
 @media (max-width: 1023px) {
   .app-header h1 { font-size: 1.6rem; }

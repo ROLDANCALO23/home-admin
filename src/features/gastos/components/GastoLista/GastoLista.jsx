@@ -1,9 +1,8 @@
-import CATEGORIAS from '../../constants/categorias'
 import { formatCOP } from '../../../../lib/formatCOP'
 import './GastoLista.css'
 
-function GastoLista({ gastos, onEliminar, onEditar }) {
-  const getCategoria = (valor) => CATEGORIAS.find((c) => c.valor === valor)
+function GastoLista({ gastos, onEliminar, onEditar, categorias = [] }) {
+  const getCategoria = (valor) => categorias.find((c) => c.valor === valor)
 
   return (
     <>

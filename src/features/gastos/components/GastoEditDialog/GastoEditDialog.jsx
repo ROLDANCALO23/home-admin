@@ -1,8 +1,7 @@
 import { useState } from 'react'
-import CATEGORIAS from '../../constants/categorias'
 import './GastoEditDialog.css'
 
-function GastoEditDialog({ gasto, onGuardar, onCancelar }) {
+function GastoEditDialog({ gasto, onGuardar, onCancelar, categorias = [] }) {
   const hoy = new Date().toISOString().split('T')[0]
   const fechaInicial = gasto.fecha instanceof Date
     ? gasto.fecha.toISOString().split('T')[0]
@@ -64,7 +63,7 @@ function GastoEditDialog({ gasto, onGuardar, onCancelar }) {
           <div>
             <label className="field-label">Categoría</label>
             <div className="categoria-grid">
-              {CATEGORIAS.map((cat) => (
+              {categorias.map((cat) => (
                 <button
                   key={cat.valor}
                   type="button"

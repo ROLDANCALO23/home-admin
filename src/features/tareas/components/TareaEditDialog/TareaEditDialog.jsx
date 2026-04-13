@@ -11,10 +11,22 @@ function horaAFechaHora(hora) {
   return candidato.toISOString().slice(0, 16)
 }
 
+function fechaDeRecordatorios(recordatorios) {
+  const hoy = new Date()
+  const pad = (n) => String(n).padStart(2, '0')
+  const hoyStr = `${hoy.getFullYear()}-${pad(hoy.getMonth() + 1)}-${pad(hoy.getDate())}`
+  const fechas = recordatorios
+    .map(r => r.loop ? horaAFechaHora(r.hora) : r.fecha_hora)
+    .filter(Boolean)
+  if (!fechas.length) return hoyStr
+  const maxIso = fechas.reduce((max, f) => (f > max ? f : max))
+  const d = new Date(maxIso)
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+}
+
 function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
   const [descripcion, setDescripcion] = useState(tarea.descripcion)
   const [responsable, setResponsable] = useState(tarea.responsable ?? '')
-  const [fechaVencimiento, setFechaVencimiento] = useState(tarea.fecha_vencimiento ?? '')
   const [recordatorios, setRecordatorios] = useState(
     (tarea.recordatorios ?? []).map(r => ({
       ...r,
@@ -42,17 +54,15 @@ function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!descripcion.trim()) return
+    const recs = recordatorios
+      .map(r => ({ ...r, fecha_hora: r.loop ? horaAFechaHora(r.hora) : r.fecha_hora }))
+      .filter(r => r.fecha_hora)
     onGuardar({
       ...tarea,
       descripcion: descripcion.trim(),
       responsable: responsable.trim() || null,
-      fecha_vencimiento: fechaVencimiento || null,
-      recordatorios: recordatorios
-        .map(r => ({
-          ...r,
-          fecha_hora: r.loop ? horaAFechaHora(r.hora) : r.fecha_hora,
-        }))
-        .filter(r => r.fecha_hora),
+      fecha_vencimiento: fechaDeRecordatorios(recs),
+      recordatorios: recs,
     })
   }
 
@@ -78,15 +88,6 @@ function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
               placeholder="¿Quién lo hace?"
               value={responsable}
               onChange={(e) => setResponsable(e.target.value)}
-            />
-          </div>
-
-          <div>
-            <label className="field-label">Fecha de vencimiento</label>
-            <input
-              type="date"
-              value={fechaVencimiento}
-              onChange={(e) => setFechaVencimiento(e.target.value)}
             />
           </div>
 

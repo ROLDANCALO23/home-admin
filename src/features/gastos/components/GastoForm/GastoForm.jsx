@@ -1,8 +1,7 @@
 import { useState } from 'react'
-import CATEGORIAS from '../../constants/categorias'
 import './GastoForm.css'
 
-function GastoForm({ onAgregar, onCategoriaChange }) {
+function GastoForm({ onAgregar, onCategoriaChange, categorias = [] }) {
   const hoy = new Date().toISOString().split('T')[0]
   const [descripcion, setDescripcion] = useState('')
   const [monto, setMonto] = useState('')
@@ -69,7 +68,7 @@ function GastoForm({ onAgregar, onCategoriaChange }) {
       <div>
         <label className="field-label">Categoría</label>
         <div className="categoria-grid">
-          {CATEGORIAS.map((cat) => (
+          {categorias.map((cat) => (
             <button
               key={cat.valor}
               type="button"

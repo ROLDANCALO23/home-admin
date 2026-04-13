@@ -1,14 +1,13 @@
-import CATEGORIAS from '../../constants/categorias'
 import { formatCOP } from '../../../../lib/formatCOP'
 import './ResumenCategorias.css'
 
-function ResumenCategorias({ gastos }) {
+function ResumenCategorias({ gastos, categorias = [] }) {
   const totales = gastos.reduce((acc, gasto) => {
     acc[gasto.categoria] = (acc[gasto.categoria] || 0) + Number(gasto.monto)
     return acc
   }, {})
 
-  const categoriasConGasto = CATEGORIAS.filter((cat) => totales[cat.valor])
+  const categoriasConGasto = categorias.filter((cat) => totales[cat.valor])
   const totalGeneral = gastos.reduce((acc, g) => acc + Number(g.monto), 0)
 
   return (

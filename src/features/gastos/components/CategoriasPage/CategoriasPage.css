@@ -1,0 +1,212 @@
+.categorias-page {
+  max-width: 600px;
+}
+
+.categorias-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.btn-nueva-cat {
+  padding: 0.35rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-nueva-cat:hover {
+  background: rgba(255, 255, 255, 0.13);
+}
+
+/* Form */
+.cat-form {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cat-form-fila {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.cat-input {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.875rem;
+  padding: 0.45rem 0.65rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.cat-input:focus {
+  border-color: rgba(140, 80, 255, 0.6);
+}
+
+.cat-input:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cat-input--emoji {
+  width: 56px;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.cat-input--label {
+  flex: 1;
+}
+
+.cat-input--valor {
+  flex: 1;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.cat-colores {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.cat-color-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s;
+}
+
+.cat-color-btn:hover {
+  transform: scale(1.15);
+}
+
+.cat-color-btn.activo {
+  border-color: #fff;
+  transform: scale(1.2);
+}
+
+.cat-form-acciones {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+/* Lista */
+.cat-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.cat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  flex-wrap: wrap;
+}
+
+.cat-item-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cat-item-emoji {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.cat-item-label {
+  font-size: 0.9rem;
+  color: #fff;
+  flex: 1;
+}
+
+.cat-item-valor {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.35);
+  font-family: monospace;
+}
+
+.cat-item-acciones {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+  margin-left: auto;
+}
+
+.btn-editar {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  border: none;
+  background: rgba(140, 80, 255, 0.15);
+  color: rgba(140, 80, 255, 0.8);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-editar:hover {
+  background: rgba(140, 80, 255, 0.3);
+  color: #c084fc;
+}
+
+.btn-eliminar {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-eliminar:hover {
+  background: rgba(239, 68, 68, 0.18);
+  color: #f87171;
+}
+
+.btn-confirmar-eliminar {
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  border: none;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.btn-cancelar-eliminar {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+  cursor: pointer;
+}

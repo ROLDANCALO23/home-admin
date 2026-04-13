@@ -13,12 +13,6 @@ html, body { overflow-x: hidden; }
   transition: background-image 0.4s ease;
 }
 
-.pagina-fondo::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(10, 10, 15, 0.75);
-}
 
 /*
   Breakpoints:

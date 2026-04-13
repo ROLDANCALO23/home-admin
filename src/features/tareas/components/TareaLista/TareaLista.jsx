@@ -26,14 +26,18 @@ function TareaLista({ tareas, onEliminar, onReordenar, onEditar }) {
     dragIndex.current = null
   }
 
-  const formatFecha = (fecha) =>
-    fecha
-      ? new Date(fecha + 'T00:00:00').toLocaleDateString('es', {
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric',
-        })
-      : null
+  const formatFecha = (iso) => {
+    if (!iso) return null
+    const d = new Date(iso)
+    return d.toLocaleDateString('es', { day: '2-digit', month: 'short', year: 'numeric' })
+  }
+
+  const ultimoRecordatorio = (recordatorios) => {
+    if (!recordatorios?.length) return null
+    return recordatorios.reduce((max, r) =>
+      r.fecha_hora > max.fecha_hora ? r : max
+    )
+  }
 
   const hoy = new Date().toISOString().split('T')[0]
 
@@ -44,7 +48,8 @@ function TareaLista({ tareas, onEliminar, onReordenar, onEditar }) {
   return (
     <ul className="tarea-lista">
       {tareas.map((tarea, i) => {
-        const vencida = tarea.fecha_vencimiento && tarea.fecha_vencimiento < hoy
+        const ultimo = ultimoRecordatorio(tarea.recordatorios)
+        const vencida = ultimo && ultimo.fecha_hora.slice(0, 10) < hoy
         return (
           <li
             key={tarea.id}
@@ -62,15 +67,12 @@ function TareaLista({ tareas, onEliminar, onReordenar, onEditar }) {
                 {tarea.responsable && (
                   <span className="tarea-responsable">👤 {tarea.responsable}</span>
                 )}
-                {tarea.fecha_vencimiento && (
+                {ultimo && (
                   <span className={`tarea-vencimiento ${vencida ? 'vencida' : ''}`}>
-                    {vencida ? '⚠ ' : '📅 '}
-                    {formatFecha(tarea.fecha_vencimiento)}
-                  </span>
-                )}
-                {tarea.recordatorios?.length > 0 && (
-                  <span className="tarea-alarmas">
-                    🔔 {tarea.recordatorios.length}
+                    {ultimo.loop
+                      ? '🔁 Diario'
+                      : `${vencida ? '⚠ ' : '🔔 '}${formatFecha(ultimo.fecha_hora)}`
+                    }
                   </span>
                 )}
               </div>

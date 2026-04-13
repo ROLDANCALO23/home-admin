@@ -12,10 +12,22 @@ function horaAFechaHora(hora) {
   return candidato.toISOString().slice(0, 16)
 }
 
+function fechaDeRecordatorios(recordatorios) {
+  const hoy = new Date()
+  const pad = (n) => String(n).padStart(2, '0')
+  const hoyStr = `${hoy.getFullYear()}-${pad(hoy.getMonth() + 1)}-${pad(hoy.getDate())}`
+  const fechas = recordatorios
+    .map(r => r.loop ? horaAFechaHora(r.hora) : r.fecha_hora)
+    .filter(Boolean)
+  if (!fechas.length) return hoyStr
+  const maxIso = fechas.reduce((max, f) => (f > max ? f : max))
+  const d = new Date(maxIso)
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+}
+
 function TareaForm({ onAgregar }) {
   const [descripcion, setDescripcion] = useState('')
   const [responsable, setResponsable] = useState('')
-  const [fechaVencimiento, setFechaVencimiento] = useState('')
   const [recordatorios, setRecordatorios] = useState([])
 
   const agregarRecordatorio = () => {
@@ -35,20 +47,17 @@ function TareaForm({ onAgregar }) {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!descripcion.trim()) return
+    const recs = recordatorios
+      .map(r => ({ ...r, fecha_hora: r.loop ? horaAFechaHora(r.hora) : r.fecha_hora }))
+      .filter(r => r.fecha_hora)
     onAgregar({
       descripcion: descripcion.trim(),
       responsable: responsable.trim() || null,
-      fecha_vencimiento: fechaVencimiento || null,
-      recordatorios: recordatorios
-        .map(r => ({
-          ...r,
-          fecha_hora: r.loop ? horaAFechaHora(r.hora) : r.fecha_hora,
-        }))
-        .filter(r => r.fecha_hora),
+      fecha_vencimiento: fechaDeRecordatorios(recs),
+      recordatorios: recs,
     })
     setDescripcion('')
     setResponsable('')
-    setFechaVencimiento('')
     setRecordatorios([])
   }
 
@@ -73,15 +82,6 @@ function TareaForm({ onAgregar }) {
           placeholder="¿Quién lo hace?"
           value={responsable}
           onChange={(e) => setResponsable(e.target.value)}
-        />
-      </div>
-
-      <div>
-        <label className="field-label">Fecha de vencimiento</label>
-        <input
-          type="date"
-          value={fechaVencimiento}
-          onChange={(e) => setFechaVencimiento(e.target.value)}
         />
       </div>
 
