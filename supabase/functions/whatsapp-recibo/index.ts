@@ -162,7 +162,7 @@ Deno.serve(async (req: Request) => {
     // ── Caso 2: imagen o texto → llamar a Claude con tool use ──
     let claudeContent: unknown[]
 
-    const hoy = new Date().toISOString().split('T')[0]
+    const hoy = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Bogota' }).format(new Date())
 
     if (mediaUrl) {
       const accountSid = Deno.env.get('TWILIO_ACCOUNT_SID')!
