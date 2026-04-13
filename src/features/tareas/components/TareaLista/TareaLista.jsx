@@ -1,9 +1,11 @@
 import { useRef, useState } from 'react'
+import ConfirmDialog from '../../../../components/ConfirmDialog'
 import './TareaLista.css'
 
 function TareaLista({ tareas, onEliminar, onReordenar, onEditar }) {
   const dragIndex = useRef(null)
   const [draggingOver, setDraggingOver] = useState(null)
+  const [confirmandoId, setConfirmandoId] = useState(null)
 
   const handleDragStart = (i) => {
     dragIndex.current = i
@@ -46,6 +48,14 @@ function TareaLista({ tareas, onEliminar, onReordenar, onEditar }) {
   }
 
   return (
+    <>
+    {confirmandoId && (
+      <ConfirmDialog
+        mensaje="¿Eliminar esta tarea?"
+        onConfirmar={() => { onEliminar(confirmandoId); setConfirmandoId(null) }}
+        onCancelar={() => setConfirmandoId(null)}
+      />
+    )}
     <ul className="tarea-lista">
       {tareas.map((tarea, i) => {
         const ultimo = ultimoRecordatorio(tarea.recordatorios)
@@ -78,11 +88,12 @@ function TareaLista({ tareas, onEliminar, onReordenar, onEditar }) {
               </div>
             </div>
             <button className="btn-editar" onClick={() => onEditar(tarea)}>✎</button>
-            <button className="btn-eliminar" onClick={() => onEliminar(tarea.id)}>✕</button>
+            <button className="btn-eliminar" onClick={() => setConfirmandoId(tarea.id)}>✕</button>
           </li>
         )
       })}
     </ul>
+    </>
   )
 }
 

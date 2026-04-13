@@ -24,7 +24,8 @@ Si el mensaje menciona una hora de aviso o alarma, incluye el campo recordatorio
 - "recuérdame mañana a las 3pm" → recordatorio con fecha_hora del día siguiente a las 15:00 hora Colombia
 - "avísame todos los días a las 8am" → recordatorio con loop: true
 - "pon alarma para el viernes a las 10am" → recordatorio con fecha_hora del próximo viernes a las 10:00
-- Las horas siempre en formato Colombia (UTC-5): YYYY-MM-DDTHH:mm:00-05:00
+- Las horas en formato YYYY-MM-DDTHH:mm:00 (hora local Colombia, SIN offset ni Z)
+- Si el usuario dice "4pm", escribe T16:00:00. Si dice "8am", escribe T08:00:00. Nunca conviertas a UTC.
 
 ## Cuándo registrar un GASTO
 Si el mensaje tiene un monto o es una foto de recibo → usa registrar_gasto o solicitar_categoria.
@@ -87,7 +88,7 @@ const TOOLS = [
           items: {
             type: 'object',
             properties: {
-              fecha_hora: { type: 'string', description: 'Fecha y hora en formato YYYY-MM-DDTHH:mm:00-05:00 (hora Colombia UTC-5)' },
+              fecha_hora: { type: 'string', description: 'Hora local Colombia sin offset: YYYY-MM-DDTHH:mm:00. Ejemplo: 4pm → T16:00:00, 8am → T08:00:00. NUNCA pongas Z ni -05:00.' },
               loop:       { type: 'boolean', description: 'true si el usuario pide que se repita todos los días a esa hora' },
             },
             required: ['fecha_hora', 'loop'],
@@ -109,6 +110,13 @@ const TOOLS = [
     },
   },
 ]
+
+// Convierte hora local Colombia (sin offset) a UTC ISO string para guardar en DB
+function colombiaLocalToUTC(fechaHora: string): string {
+  const local = fechaHora.replace(/(Z|[+-]\d{2}:?\d{2})$/, '') // quita cualquier offset
+  const asIfUTC = new Date(local + 'Z')                         // parsea los dígitos como UTC
+  return new Date(asIfUTC.getTime() + 5 * 60 * 60 * 1000).toISOString() // suma 5h → UTC real
+}
 
 Deno.serve(async (req: Request) => {
   if (req.method !== 'POST') {
@@ -162,7 +170,9 @@ Deno.serve(async (req: Request) => {
     // ── Caso 2: imagen o texto → llamar a Claude con tool use ──
     let claudeContent: unknown[]
 
-    const hoy = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Bogota' }).format(new Date())
+    const hoy     = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Bogota' }).format(new Date())
+    const ahoraStr = new Date().toLocaleString('sv-SE', { timeZone: 'America/Bogota' }).replace(' ', 'T').slice(0, 16)
+    // ej: "2026-04-13T15:30" — hora actual Colombia para que Claude calcule "en 1 hora", "mañana a las 8am", etc.
 
     if (mediaUrl) {
       const accountSid = Deno.env.get('TWILIO_ACCOUNT_SID')!
@@ -186,11 +196,11 @@ Deno.serve(async (req: Request) => {
           type: 'image',
           source: { type: 'base64', media_type: mediaType, data: imgBase64 },
         },
-        { type: 'text', text: `Extrae los datos del gasto de este recibo. Fecha de hoy: ${hoy}.` },
+        { type: 'text', text: `Extrae los datos del gasto de este recibo. Fecha y hora actual en Colombia: ${ahoraStr}.` },
       ]
     } else if (body) {
       claudeContent = [
-        { type: 'text', text: `Extrae los datos del gasto de este mensaje: "${body}". Fecha de hoy: ${hoy}.` },
+        { type: 'text', text: `Extrae los datos de este mensaje: "${body}". Fecha y hora actual en Colombia: ${ahoraStr}.` },
       ]
     } else {
       return twimlResponse(
@@ -207,7 +217,7 @@ Deno.serve(async (req: Request) => {
         'content-type':       'application/json',
       },
       body: JSON.stringify({
-        model:       'claude-sonnet-4-6',
+        model:       'claude-haiku-4-5-20251001',
         max_tokens:  1024,
         system:      SYSTEM_PROMPT,
         tools:       TOOLS,
@@ -237,11 +247,22 @@ Deno.serve(async (req: Request) => {
 
       const siguienteOrden = ultimasTareas?.[0]?.orden != null ? ultimasTareas[0].orden + 1 : 0
 
+      // fecha_vencimiento = fecha del último recordatorio (o la que indicó Claude si no hay recordatorios)
+      const recs: { fecha_hora: string; loop: boolean }[] = Array.isArray(input.recordatorios)
+        ? input.recordatorios : []
+      const fechasUTC = recs.map(r => colombiaLocalToUTC(r.fecha_hora))
+      const ultimaFechaUTC = fechasUTC.length > 0
+        ? fechasUTC.reduce((max, f) => (f > max ? f : max))
+        : null
+      const fechaVencimiento = ultimaFechaUTC
+        ? ultimaFechaUTC.slice(0, 10)
+        : (input.fecha_vencimiento ?? null)
+
       const tareaId = Date.now()
       const { error } = await supabase.from('tareas').insert({
         id:                tareaId,
         descripcion:       String(input.descripcion).slice(0, 120),
-        fecha_vencimiento: input.fecha_vencimiento ?? null,
+        fecha_vencimiento: fechaVencimiento,
         fecha_registro:    new Date().toISOString(),
         orden:             siguienteOrden,
       })
@@ -249,18 +270,18 @@ Deno.serve(async (req: Request) => {
       if (error) return twimlResponse('Error al guardar la tarea. Intenta de nuevo.')
 
       // Insertar recordatorios si los hay
-      if (Array.isArray(input.recordatorios) && input.recordatorios.length > 0) {
+      if (recs.length > 0) {
         await supabase.from('recordatorios').insert(
-          input.recordatorios.map((r: { fecha_hora: string; loop: boolean }) => ({
-            tarea_id:  tareaId,
-            fecha_hora: r.fecha_hora,
+          recs.map(r => ({
+            tarea_id:   tareaId,
+            fecha_hora: colombiaLocalToUTC(r.fecha_hora),
             loop:       r.loop ?? false,
             enviado:    false,
           }))
         )
       }
 
-      const fechaMsg = input.fecha_vencimiento ? `\n📅 Vence: ${input.fecha_vencimiento}` : ''
+      const fechaMsg = fechaVencimiento ? `\n📅 Vence: ${fechaVencimiento}` : ''
       const recMsg   = input.recordatorios?.length
         ? `\n🔔 ${input.recordatorios.length} recordatorio(s) programado(s)`
         : ''

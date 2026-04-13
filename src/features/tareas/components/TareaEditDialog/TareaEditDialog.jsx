@@ -1,6 +1,13 @@
 import { useState } from 'react'
 import './TareaEditDialog.css'
 
+// Convierte un string UTC de la DB a hora local Colombia para datetime-local input
+function utcToColombiaLocal(utcStr) {
+  if (!utcStr) return ''
+  const d = new Date(utcStr)
+  return d.toLocaleString('sv-SE', { timeZone: 'America/Bogota' }).replace(' ', 'T').slice(0, 16)
+}
+
 function horaAFechaHora(hora) {
   if (!hora) return ''
   const ahora = new Date()
@@ -30,7 +37,7 @@ function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
   const [recordatorios, setRecordatorios] = useState(
     (tarea.recordatorios ?? []).map(r => ({
       ...r,
-      fecha_hora: r.loop ? '' : (r.fecha_hora ? r.fecha_hora.slice(0, 16) : ''),
+      fecha_hora: r.loop ? '' : utcToColombiaLocal(r.fecha_hora),
       hora: r.loop && r.fecha_hora ? new Date(r.fecha_hora).toTimeString().slice(0, 5) : '',
       loop: r.loop ?? false,
       esExistente: true,
@@ -55,7 +62,12 @@ function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
     e.preventDefault()
     if (!descripcion.trim()) return
     const recs = recordatorios
-      .map(r => ({ ...r, fecha_hora: r.loop ? horaAFechaHora(r.hora) : r.fecha_hora }))
+      .map(r => ({
+        ...r,
+        fecha_hora: r.loop
+          ? horaAFechaHora(r.hora)
+          : (r.fecha_hora ? new Date(r.fecha_hora + ':00-05:00').toISOString() : ''),
+      }))
       .filter(r => r.fecha_hora)
     onGuardar({
       ...tarea,
