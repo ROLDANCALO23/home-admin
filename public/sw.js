@@ -1,7 +1,8 @@
 self.addEventListener('push', (event) => {
   if (!event.data) return
 
-  const data = event.data.json()
+  let data = {}
+  try { data = event.data.json() } catch { data = { body: event.data.text() } }
   const title = data.title ?? 'Home Admin'
   const options = {
     body: data.body,
