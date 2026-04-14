@@ -51,20 +51,32 @@
 
 .recordatorio-item {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding-top: 0.5rem;
+}
+
+.recordatorio-item + .recordatorio-item {
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .recordatorio-inputs {
-  flex: 1;
-  min-width: 0;
+  width: 100%;
+}
+
+.recordatorio-inputs input {
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .recordatorio-controls {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  flex-shrink: 0;
+}
+
+.recordatorio-controls .btn-eliminar {
+  margin-left: auto;
 }
 
 .loop-label {
@@ -129,10 +141,9 @@ input[type="time"] {
 
 .recordatorio-inputs input[type="time"],
 .recordatorio-inputs input[type="datetime-local"] {
-  flex: 1;
-  min-width: 0;
+  width: 100%;
   max-width: none;
-  width: auto;
+  box-sizing: border-box;
 }
 
 
