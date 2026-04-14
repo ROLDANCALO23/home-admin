@@ -23,12 +23,18 @@ export function usePushNotifications() {
       return
     }
     if (Notification.permission === 'granted') {
-      // Verificar si ya hay suscripción activa
-      navigator.serviceWorker.ready.then((reg) =>
-        reg.pushManager.getSubscription()
-      ).then((sub) => {
-        if (sub) setEstado('activo')
-      })
+      // Verificar si ya hay suscripción activa y sincronizarla con Supabase
+      navigator.serviceWorker.ready
+        .then((reg) => reg.pushManager.getSubscription())
+        .then((sub) => {
+          if (!sub) return
+          const { endpoint, keys } = sub.toJSON()
+          supabase.from('push_subscriptions').upsert(
+            { endpoint, p256dh: keys.p256dh, auth: keys.auth },
+            { onConflict: 'endpoint' }
+          )
+          setEstado('activo')
+        })
     }
   }, [])
 
