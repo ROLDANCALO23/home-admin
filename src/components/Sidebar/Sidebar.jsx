@@ -4,7 +4,7 @@ import './Sidebar.css'
 
 const PAGES = [
   { id: 'gastos', label: 'Gastos', icon: '💸' },
-  { id: 'tareas', label: 'Tareas', icon: '📋' },
+  { id: 'tareas', label: 'Recordatorios', icon: '⏰' },
 ]
 
 const BELL_LABELS = {
