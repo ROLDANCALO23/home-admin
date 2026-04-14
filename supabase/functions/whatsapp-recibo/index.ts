@@ -13,18 +13,17 @@ const OPCIONES_CATEGORIA = CATEGORIAS
   .map((c, i) => `${i + 1}. ${c.emoji} ${c.label}`)
   .join('\n')
 
-const SYSTEM_PROMPT = `Eres un asistente personal que registra gastos y recordatorios del hogar en Colombia.
+const SYSTEM_PROMPT = `Eres un asistente personal que registra gastos y tareas del hogar en Colombia.
 
-## Cuándo registrar un RECORDATORIO
-Si el mensaje menciona algo pendiente por hacer (llamar, comprar, ir a, agendar, recordar, pagar, etc.) → usa registrar_recordatorio.
-Ejemplos: "recordar llamar al médico", "recordar pagar el arriendo el viernes", "comprar comida para los perros"
+## Cuándo registrar una TAREA
+Si el mensaje empieza con "tarea:" o menciona algo pendiente por hacer (llamar, comprar, ir a, agendar, recordar, pagar, etc.) → usa registrar_tarea.
+Ejemplos: "tarea: llamar al médico", "recordar pagar el arriendo el viernes", "comprar comida para los perros"
 
-## Alarmas en recordatorios
-Si el mensaje menciona una hora de aviso o alarma, incluye el campo alarmas.
-- "recuérdame mañana a las 3pm" → alarma con fecha_hora del día siguiente a las 15:00 hora Colombia
-- "avísame todos los días a las 8am" → alarma con loop: true, loop_semanal: false
-- "avísame cada semana" o "cada 7 días" o "semanal" → alarma con loop_semanal: true, fecha_hora con el día y hora exactos de la primera ocurrencia
-- "pon alarma para el viernes a las 10am" → alarma con fecha_hora del próximo viernes a las 10:00
+## Recordatorios en tareas
+Si el mensaje menciona una hora de aviso o alarma, incluye el campo recordatorios.
+- "recuérdame mañana a las 3pm" → recordatorio con fecha_hora del día siguiente a las 15:00 hora Colombia
+- "avísame todos los días a las 8am" → recordatorio con loop: true
+- "pon alarma para el viernes a las 10am" → recordatorio con fecha_hora del próximo viernes a las 10:00
 - Las horas en formato YYYY-MM-DDTHH:mm:00 (hora local Colombia, SIN offset ni Z)
 - Si el usuario dice "4pm", escribe T16:00:00. Si dice "8am", escribe T08:00:00. Nunca conviertas a UTC.
 
@@ -76,23 +75,23 @@ const TOOLS = [
     },
   },
   {
-    name: 'registrar_recordatorio',
-    description: 'Registra un recordatorio o pendiente cuando el mensaje no tiene monto sino algo por hacer.',
+    name: 'registrar_tarea',
+    description: 'Registra una tarea o pendiente cuando el mensaje no tiene monto sino algo por hacer.',
     input_schema: {
       type: 'object',
       properties: {
-        descripcion: { type: 'string', description: 'Qué hay que hacer (máx 120 chars)' },
-        alarmas: {
+        descripcion:       { type: 'string', description: 'Qué hay que hacer (máx 120 chars)' },
+        fecha_vencimiento: { type: 'string', description: 'Fecha límite en formato YYYY-MM-DD. Omitir si no se menciona.' },
+        recordatorios: {
           type: 'array',
-          description: 'Lista de alarmas para este recordatorio. Omitir si no se menciona hora.',
+          description: 'Lista de recordatorios/alarmas para esta tarea. Omitir si no se menciona hora.',
           items: {
             type: 'object',
             properties: {
-              fecha_hora:   { type: 'string', description: 'Hora local Colombia sin offset: YYYY-MM-DDTHH:mm:00. Ejemplo: 4pm → T16:00:00, 8am → T08:00:00. NUNCA pongas Z ni -05:00.' },
-              loop:         { type: 'boolean', description: 'true si el usuario pide que se repita TODOS LOS DÍAS a esa hora' },
-              loop_semanal: { type: 'boolean', description: 'true si el usuario pide que se repita UNA VEZ A LA SEMANA (cada 7 días). Usa fecha_hora con el día y hora exactos de la primera ocurrencia.' },
+              fecha_hora: { type: 'string', description: 'Hora local Colombia sin offset: YYYY-MM-DDTHH:mm:00. Ejemplo: 4pm → T16:00:00, 8am → T08:00:00. NUNCA pongas Z ni -05:00.' },
+              loop:       { type: 'boolean', description: 'true si el usuario pide que se repita todos los días a esa hora' },
             },
-            required: ['fecha_hora', 'loop', 'loop_semanal'],
+            required: ['fecha_hora', 'loop'],
           },
         },
       },
@@ -171,6 +170,7 @@ Deno.serve(async (req: Request) => {
     // ── Caso 2: imagen o texto → llamar a Claude con tool use ──
     let claudeContent: unknown[]
 
+    const hoy     = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Bogota' }).format(new Date())
     const ahoraStr = new Date().toLocaleString('sv-SE', { timeZone: 'America/Bogota' }).replace(' ', 'T').slice(0, 16)
     // ej: "2026-04-13T15:30" — hora actual Colombia para que Claude calcule "en 1 hora", "mañana a las 8am", etc.
 
@@ -217,17 +217,18 @@ Deno.serve(async (req: Request) => {
         'content-type':       'application/json',
       },
       body: JSON.stringify({
-        model:       'claude-haiku-4-5-20251001',
+        model:       'claude-sonnet-4-6',
         max_tokens:  1024,
         system:      SYSTEM_PROMPT,
         tools:       TOOLS,
-        tool_choice: { type: 'any' },
+        tool_choice: { type: 'any' }, // fuerza siempre el uso de una herramienta
         messages:    [{ role: 'user', content: claudeContent }],
       }),
     })
 
     const claudeData = await claudeResponse.json()
 
+    // Leer qué herramienta eligió Claude
     const toolBlock = claudeData.content?.find((b: { type: string }) => b.type === 'tool_use')
 
     if (!toolBlock) {
@@ -236,48 +237,47 @@ Deno.serve(async (req: Request) => {
 
     const { name, input } = toolBlock
 
-    // ── registrar_recordatorio ──
-    if (name === 'registrar_recordatorio') {
-      const { data: ultimosRecs } = await supabase
-        .from('recordatorios')
+    // ── registrar_tarea ──
+    if (name === 'registrar_tarea') {
+      const { data: ultimasTareas } = await supabase
+        .from('tareas')
         .select('orden')
         .order('orden', { ascending: false })
         .limit(1)
 
-      const siguienteOrden = ultimosRecs?.[0]?.orden != null ? ultimosRecs[0].orden + 1 : 0
+      const siguienteOrden = ultimasTareas?.[0]?.orden != null ? ultimasTareas[0].orden + 1 : 0
 
-      const alarmas: { fecha_hora: string; loop: boolean; loop_semanal: boolean }[] = Array.isArray(input.alarmas)
-        ? input.alarmas : []
-
-      const recId = Date.now()
-      const { error } = await supabase.from('recordatorios').insert({
-        id:             recId,
-        descripcion:    String(input.descripcion).slice(0, 120),
-        fecha_registro: new Date().toISOString(),
-        orden:          siguienteOrden,
+      const tareaId = Date.now()
+      const { error } = await supabase.from('tareas').insert({
+        id:                tareaId,
+        descripcion:       String(input.descripcion).slice(0, 120),
+        fecha_vencimiento: input.fecha_vencimiento ?? null,
+        fecha_registro:    new Date().toISOString(),
+        orden:             siguienteOrden,
       })
 
-      if (error) return twimlResponse('Error al guardar el recordatorio. Intenta de nuevo.')
+      if (error) return twimlResponse('Error al guardar la tarea. Intenta de nuevo.')
 
-      if (alarmas.length > 0) {
-        await supabase.from('alarmas').insert(
-          alarmas.map(a => ({
-            recordatorio_id: recId,
-            fecha_hora:      colombiaLocalToUTC(a.fecha_hora),
-            loop:            a.loop ?? false,
-            loop_semanal:    a.loop_semanal ?? false,
-            enviado:         false,
+      // Insertar recordatorios si los hay
+      if (Array.isArray(input.recordatorios) && input.recordatorios.length > 0) {
+        await supabase.from('recordatorios').insert(
+          input.recordatorios.map((r: { fecha_hora: string; loop: boolean }) => ({
+            tarea_id:  tareaId,
+            fecha_hora: colombiaLocalToUTC(r.fecha_hora),
+            loop:       r.loop ?? false,
+            enviado:    false,
           }))
         )
       }
 
-      const alarmaMsg = alarmas.length
-        ? `\n🔔 ${alarmas.length} alarma(s) programada(s)`
+      const fechaMsg = input.fecha_vencimiento ? `\n📅 Vence: ${input.fecha_vencimiento}` : ''
+      const recMsg   = input.recordatorios?.length
+        ? `\n🔔 ${input.recordatorios.length} recordatorio(s) programado(s)`
         : ''
-      return twimlResponse(`📋 Recordatorio registrado:\n*${input.descripcion}*${alarmaMsg}`)
+      return twimlResponse(`📋 Tarea registrada:\n*${input.descripcion}*${fechaMsg}${recMsg}`)
     }
 
-    // ── registrar_gasto ──
+    // ── registrar_gasto: Claude está seguro de todo ──
     if (name === 'registrar_gasto') {
       const cat = CATEGORIAS.find(c => c.valor === input.categoria)!
 
@@ -300,13 +300,13 @@ Deno.serve(async (req: Request) => {
       )
     }
 
-    // ── solicitar_categoria ──
+    // ── solicitar_categoria: Claude tiene duda, guarda pendiente y pregunta ──
     if (name === 'solicitar_categoria') {
       const { error } = await supabase.from('gastos').insert({
         id:          Date.now(),
         descripcion: String(input.descripcion).slice(0, 60),
         monto:       Number(input.monto),
-        categoria:   'comida',
+        categoria:   'comida', // temporal, se actualiza cuando el usuario elige
         fecha:       `${input.fecha}T12:00:00Z`,
         estado:      'pendiente',
       })
@@ -319,10 +319,10 @@ Deno.serve(async (req: Request) => {
       )
     }
 
-    // ── reportar_error ──
+    // ── reportar_error: Claude no pudo leer el recibo ──
     if (name === 'reportar_error') {
       return twimlResponse(
-        `No pude registrar: ${input.mensaje}\n\n` +
+        `No pude registrar el gasto: ${input.mensaje}\n\n` +
         `Puedes escribirme algo como:\n"Almuerzo 35000 comida"`
       )
     }
