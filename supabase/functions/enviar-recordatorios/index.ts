@@ -130,7 +130,8 @@ Deno.serve(async (req) => {
   // ── Modo test: envia push de prueba y devuelve resultado detallado ──
   const url = new URL(req.url)
   if (url.searchParams.get('test') === '1') {
-    const { data: subs } = await supabase.from('push_subscriptions').select('*')
+    const { data: subs, error: subsErr } = await supabase.from('push_subscriptions').select('*')
+    if (subsErr) return new Response(JSON.stringify({ error: 'DB error', detail: subsErr.message }), { headers: { 'Content-Type': 'application/json' } })
     if (!subs?.length) return new Response(JSON.stringify({ error: 'No hay suscripciones' }), { headers: { 'Content-Type': 'application/json' } })
     const payload = JSON.stringify({ title: 'Test Home Admin', body: '¡Push de prueba funcionando!' })
     const results = await Promise.all(subs.map(async (sub) => {
