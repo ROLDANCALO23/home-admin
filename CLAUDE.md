@@ -15,43 +15,92 @@ npm run preview   # preview production build
 
 ## Architecture
 
-React 19 + Vite 8, JavaScript only (no TypeScript). No router, no global state library — all state is local `useState`.
+React 19 + Vite 8, JavaScript only (no TypeScript). Navigation via `useState` en `App.jsx` — no router. No global state library, todo es `useState` local.
+
+La app tiene dos secciones accesibles desde un `Sidebar`: **Gastos** y **Recordatorios**.
 
 ### Folder conventions
 
-Feature-based structure under `src/features/`. Each feature owns its components, constants, and a barrel `index.js`.
+Feature-based structure bajo `src/features/`. Componentes compartidos (no atados a un feature) van en `src/components/`. Utilidades y hooks en `src/lib/`.
 
 ```
 src/
+├── components/                   ← componentes globales reutilizables
+│   ├── ConfirmDialog/
+│   └── Sidebar/
 ├── features/
-│   └── gastos/                   ← only feature so far
-│       ├── components/           ← UI components private to this feature
-│       │   └── ComponentName/    ← each component in its own folder
-│       │       ├── ComponentName.jsx
-│       │       ├── ComponentName.css
-│       │       └── index.js      ← barrel: export { default } from './ComponentName'
-│       ├── constants/
-│       │   └── categorias.js     ← CATEGORIAS array (single source of truth for categories)
-│       ├── RegistroGastos/       ← feature root component, owns all state
-│       └── index.js              ← public API: export { RegistroGastos }
+│   ├── gastos/
+│   │   ├── components/
+│   │   │   ├── CategoriasPage/   ← CRUD de categorías (desde Supabase)
+│   │   │   ├── FiltroRango/      ← filtro por rango de fechas
+│   │   │   ├── GastoEditDialog/
+│   │   │   ├── GastoForm/
+│   │   │   ├── GastoLista/
+│   │   │   ├── ResumenCategorias/
+│   │   │   └── ToastContainer/   ← compartido también por tareas
+│   │   ├── constants/
+│   │   │   └── categorias.js     ← ya no se usa como fuente de datos; categorías vienen de Supabase
+│   │   ├── RegistroGastos/       ← root del feature, dueño del estado
+│   │   └── index.js
+│   └── tareas/
+│       ├── components/
+│       │   ├── TareaEditDialog/
+│       │   ├── TareaForm/        ← crea recordatorio con alarmas opcionales
+│       │   └── TareaLista/       ← lista con drag-and-drop para reordenar
+│       ├── RegistroTareas/       ← root del feature, dueño del estado
+│       └── index.js
+├── lib/
+│   ├── formatCOP.js              ← formatea montos a pesos colombianos
+│   ├── supabase.js               ← cliente Supabase (singleton)
+│   ├── usePushNotifications.js   ← hook para suscripción web push (VAPID)
+│   └── useToast.js               ← hook de toasts (success/error)
 ├── styles/
-│   └── global.css                ← reset, shared classes (.card, .card-title, .categoria-badge, inputs)
-└── App.jsx                       ← imports global.css, renders <RegistroGastos />
+│   └── global.css                ← reset, .card, .card-title, .categoria-badge, inputs
+└── App.jsx                       ← importa global.css, renderiza Sidebar + página activa
 ```
+
+### Backend: Supabase
+
+Toda la persistencia es en Supabase. El cliente se exporta desde `src/lib/supabase.js`.
+
+Tablas:
+
+| Tabla | Descripción |
+|-------|-------------|
+| `gastos` | `{ id, descripcion, monto, categoria, fecha }` |
+| `categorias` | `{ id, nombre, valor, color, imagen, orden }` — fuente de verdad de categorías |
+| `recordatorios` | `{ id, descripcion, responsable, fecha_registro, orden }` |
+| `alarmas` | `{ id, recordatorio_id, fecha_hora, loop, loop_semanal }` — alarmas de un recordatorio |
+| `push_subscriptions` | `{ endpoint, p256dh, auth }` — suscripciones web push |
+
+`RegistroTareas` escucha cambios en tiempo real en la tabla `alarmas` vía Supabase Realtime channels.
 
 ### State
 
-All gastos state lives in `RegistroGastos.jsx`. Components receive data via props — no context or external store. A gasto object has the shape `{ id, descripcion, monto, categoria, fecha }` where `id = Date.now()` and `fecha = new Date()` are set at creation time.
+- **Gastos**: todo el estado en `RegistroGastos.jsx`. Los componentes reciben datos por props.
+- **Tareas**: todo el estado en `RegistroTareas.jsx`. Los componentes reciben datos por props.
+- No hay contexto ni store global.
+
+Un gasto: `{ id, descripcion, monto, categoria, fecha }`
+Un recordatorio: `{ id, descripcion, responsable, fecha_registro, orden, alarmas[] }`
+Una alarma: `{ id, recordatorio_id, fecha_hora, loop, loop_semanal }`
+
+### Push Notifications
+
+El hook `usePushNotifications` (en `src/lib/`) solicita permiso al navegador, suscribe al Service Worker con una clave VAPID (`VITE_VAPID_PUBLIC_KEY`) y guarda el endpoint en la tabla `push_subscriptions` de Supabase.
 
 ### Styling
 
-- Global shared styles: `src/styles/global.css` — imported once in `App.jsx`
-- Component styles: co-located `ComponentName.css`, imported inside the component
-- Dark theme with CSS custom values (no CSS variables/design tokens yet)
+- Global shared styles: `src/styles/global.css` — importado una vez en `App.jsx`
+- Component styles: co-located `ComponentName.css`, importado dentro del componente
+- Tema oscuro con valores CSS directos (sin design tokens aún)
 - Breakpoints: mobile `< 600px`, tablet `600–1023px`, desktop `≥ 1024px`
-- `.card` is a shared class defined in `global.css` used across all feature containers
+- `.card` es clase compartida definida en `global.css`
 
-### Categories
+### Variables de entorno
 
-`src/features/gastos/constants/categorias.js` exports a default `CATEGORIAS` array. Import it directly in any component that needs category data — do not redefine it elsewhere.
->>>>>>> ec0587f (first commit)
+```
+VITE_SUPABASE_URL=
+VITE_SUPABASE_ANON_KEY=
+VITE_VAPID_PUBLIC_KEY=
+```

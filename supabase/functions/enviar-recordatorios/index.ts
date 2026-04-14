@@ -47,12 +47,12 @@ async function vapidJWT(endpoint: string, subject: string, pubB64: string, privB
   return `${hdr}.${pld}.${toB64(new Uint8Array(sig))}`
 }
 
-// ── Payload encryption (aesgcm) ──────────────────────────────────────────
-async function encryptPayload(text: string, p256dhB64: string, authB64: string) {
-  const receiverPub = b64(p256dhB64)
-  const authSecret  = b64(authB64)
+// ── Payload encryption (aes128gcm — RFC 8291) ────────────────────────────
+async function encryptPayload(text: string, p256dhB64: string, authB64: string): Promise<Uint8Array> {
+  const receiverPub = b64(p256dhB64)  // 65-byte uncompressed EC point
+  const authSecret  = b64(authB64)    // 16-byte auth secret
 
-  const serverKP = await crypto.subtle.generateKey({ name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveBits'])
+  const serverKP  = await crypto.subtle.generateKey({ name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveBits'])
   const serverPub = new Uint8Array(await crypto.subtle.exportKey('raw', serverKP.publicKey))
 
   const receiverKey = await crypto.subtle.importKey('raw', receiverPub, { name: 'ECDH', namedCurve: 'P-256' }, false, [])
@@ -60,25 +60,36 @@ async function encryptPayload(text: string, p256dhB64: string, authB64: string) 
 
   const salt = crypto.getRandomValues(new Uint8Array(16))
 
-  const prkBuf = await hkdf(ecdhSecret, authSecret.buffer as ArrayBuffer, new TextEncoder().encode('Content-Encoding: auth\0').buffer as ArrayBuffer, 32)
-
-  const ctx = new Uint8Array([
-    ...new TextEncoder().encode('P-256\0'),
-    0, receiverPub.length, ...receiverPub,
-    0, serverPub.length,   ...serverPub,
+  // PRK (RFC 8291 §3.3)
+  const infoKey = new Uint8Array([
+    ...new TextEncoder().encode('WebPush: info\0'),
+    ...receiverPub,
+    ...serverPub,
   ])
+  const prk = await hkdf(ecdhSecret, authSecret.buffer as ArrayBuffer, infoKey.buffer as ArrayBuffer, 32)
 
-  const cekInfo   = new Uint8Array([...new TextEncoder().encode('Content-Encoding: aesgcm\0'),  ...ctx])
-  const nonceInfo = new Uint8Array([...new TextEncoder().encode('Content-Encoding: nonce\0'),   ...ctx])
-
-  const cekBuf   = await hkdf(prkBuf, salt.buffer as ArrayBuffer, cekInfo.buffer as ArrayBuffer,   16)
-  const nonceBuf = await hkdf(prkBuf, salt.buffer as ArrayBuffer, nonceInfo.buffer as ArrayBuffer, 12)
+  // CEK and nonce
+  const cekBuf   = await hkdf(prk, salt.buffer as ArrayBuffer, new TextEncoder().encode('Content-Encoding: aes128gcm\0').buffer as ArrayBuffer, 16)
+  const nonceBuf = await hkdf(prk, salt.buffer as ArrayBuffer, new TextEncoder().encode('Content-Encoding: nonce\0').buffer as ArrayBuffer,     12)
 
   const aesKey    = await crypto.subtle.importKey('raw', cekBuf, 'AES-GCM', false, ['encrypt'])
-  const padded    = new Uint8Array([0, 0, ...new TextEncoder().encode(text)])
-  const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceBuf }, aesKey, padded)
+  // Plaintext = message bytes + 0x02 delimiter (last-record marker)
+  const plaintext = new Uint8Array([...new TextEncoder().encode(text), 2])
+  const ciphertext = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceBuf }, aesKey, plaintext))
 
-  return { ciphertext: new Uint8Array(ciphertext), salt, serverPub }
+  // Header: salt(16) + rs(4 BE) + idlen(1) + serverPub(65)
+  const rs     = 4096
+  const header = new Uint8Array(16 + 4 + 1 + serverPub.length)
+  const dv     = new DataView(header.buffer)
+  header.set(salt, 0)
+  dv.setUint32(16, rs, false)
+  header[20] = serverPub.length
+  header.set(serverPub, 21)
+
+  const body = new Uint8Array(header.length + ciphertext.length)
+  body.set(header)
+  body.set(ciphertext, header.length)
+  return body
 }
 
 // ── Send one push notification ────────────────────────────────────────────
@@ -89,22 +100,20 @@ async function sendPush(
   pubKey: string,
   privKey: string
 ): Promise<{ status: number; body: string }> {
-  const jwt = await vapidJWT(sub.endpoint, subject, pubKey, privKey)
-  const { ciphertext, salt, serverPub } = await encryptPayload(payload, sub.p256dh, sub.auth)
+  const jwt  = await vapidJWT(sub.endpoint, subject, pubKey, privKey)
+  const body = await encryptPayload(payload, sub.p256dh, sub.auth)
   const resp = await fetch(sub.endpoint, {
     method: 'POST',
     headers: {
       'TTL': '86400',
       'Content-Type': 'application/octet-stream',
-      'Content-Encoding': 'aesgcm',
-      'Encryption': `salt=${toB64(salt)}`,
-      'Crypto-Key': `dh=${toB64(serverPub)};p256ecdsa=${pubKey}`,
-      'Authorization': `WebPush ${jwt}`,
+      'Content-Encoding': 'aes128gcm',
+      'Authorization': `vapid t=${jwt},k=${pubKey}`,
     },
-    body: ciphertext,
+    body,
   })
-  const body = await resp.text()
-  return { status: resp.status, body }
+  const respBody = await resp.text()
+  return { status: resp.status, body: respBody }
 }
 
 // ── Main ─────────────────────────────────────────────────────────────────
