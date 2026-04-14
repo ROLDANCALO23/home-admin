@@ -226,6 +226,7 @@ Deno.serve(async (req) => {
     }
 
     // Push notifications
+    console.log(`Push subs: ${suscripciones?.length ?? 0} | payload: ${pushBody}`)
     if (suscripciones?.length) {
       const payload = JSON.stringify({ title: 'Home Admin', body: pushBody })
       await Promise.allSettled(suscripciones.map(async (sub) => {
