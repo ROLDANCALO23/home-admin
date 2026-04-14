@@ -51,19 +51,20 @@
 
 .recordatorio-item {
   display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .recordatorio-inputs {
-  display: flex;
-  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
 }
 
 .recordatorio-controls {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  flex-shrink: 0;
 }
 
 .loop-label {
@@ -134,9 +135,6 @@ input[type="time"] {
   width: auto;
 }
 
-.recordatorio-controls .btn-eliminar {
-  margin-left: auto;
-}
 
 @media (max-width: 599px) {
   .recordatorio-item {
