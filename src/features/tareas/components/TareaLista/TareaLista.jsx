@@ -44,21 +44,21 @@ function TareaLista({ tareas, onEliminar, onReordenar, onEditar }) {
   const hoy = new Date().toISOString().split('T')[0]
 
   if (tareas.length === 0) {
-    return <p className="empty">No hay tareas pendientes</p>
+    return <p className="empty">No hay recordatorios pendientes</p>
   }
 
   return (
     <>
     {confirmandoId && (
       <ConfirmDialog
-        mensaje="¿Eliminar esta tarea?"
+        mensaje="¿Eliminar este recordatorio?"
         onConfirmar={() => { onEliminar(confirmandoId); setConfirmandoId(null) }}
         onCancelar={() => setConfirmandoId(null)}
       />
     )}
     <ul className="tarea-lista">
       {tareas.map((tarea, i) => {
-        const ultimo = ultimoRecordatorio(tarea.recordatorios)
+        const ultimo = ultimoRecordatorio(tarea.alarmas)
         const vencida = ultimo && ultimo.fecha_hora.slice(0, 10) < hoy
         return (
           <li
@@ -81,7 +81,9 @@ function TareaLista({ tareas, onEliminar, onReordenar, onEditar }) {
                   <span className={`tarea-vencimiento ${vencida ? 'vencida' : ''}`}>
                     {ultimo.loop
                       ? '🔁 Diario'
-                      : `${vencida ? '⚠ ' : '🔔 '}${formatFecha(ultimo.fecha_hora)}`
+                      : ultimo.loop_semanal
+                        ? '📅 Semanal'
+                        : `${vencida ? '⚠ ' : '🔔 '}${formatFecha(ultimo.fecha_hora)}`
                     }
                   </span>
                 )}

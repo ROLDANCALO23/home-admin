@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import './TareaEditDialog.css'
 
-// Convierte un string UTC de la DB a hora local Colombia para datetime-local input
 function utcToColombiaLocal(utcStr) {
   if (!utcStr) return ''
   const d = new Date(utcStr)
@@ -18,34 +17,23 @@ function horaAFechaHora(hora) {
   return candidato.toISOString().slice(0, 16)
 }
 
-function fechaDeRecordatorios(recordatorios) {
-  const hoy = new Date()
-  const pad = (n) => String(n).padStart(2, '0')
-  const hoyStr = `${hoy.getFullYear()}-${pad(hoy.getMonth() + 1)}-${pad(hoy.getDate())}`
-  const fechas = recordatorios
-    .map(r => r.loop ? horaAFechaHora(r.hora) : r.fecha_hora)
-    .filter(Boolean)
-  if (!fechas.length) return hoyStr
-  const maxIso = fechas.reduce((max, f) => (f > max ? f : max))
-  const d = new Date(maxIso)
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
-}
 
 function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
   const [descripcion, setDescripcion] = useState(tarea.descripcion)
   const [responsable, setResponsable] = useState(tarea.responsable ?? '')
   const [recordatorios, setRecordatorios] = useState(
-    (tarea.recordatorios ?? []).map(r => ({
+    (tarea.alarmas ?? []).map(r => ({
       ...r,
       fecha_hora: r.loop ? '' : utcToColombiaLocal(r.fecha_hora),
       hora: r.loop && r.fecha_hora ? new Date(r.fecha_hora).toTimeString().slice(0, 5) : '',
       loop: r.loop ?? false,
+      loop_semanal: r.loop_semanal ?? false,
       esExistente: true,
     }))
   )
 
   const agregarRecordatorio = () => {
-    setRecordatorios([...recordatorios, { fecha_hora: '', nota: '', esExistente: false }])
+    setRecordatorios([...recordatorios, { fecha_hora: '', hora: '', loop: false, loop_semanal: false, esExistente: false }])
   }
 
   const actualizarRecordatorio = (i, campo, valor) => {
@@ -73,15 +61,14 @@ function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
       ...tarea,
       descripcion: descripcion.trim(),
       responsable: responsable.trim() || null,
-      fecha_vencimiento: fechaDeRecordatorios(recs),
-      recordatorios: recs,
+      alarmas: recs,
     })
   }
 
   return (
     <div className="edit-overlay" onClick={onCancelar}>
       <div className="edit-dialog" onClick={(e) => e.stopPropagation()}>
-        <span className="card-title">Editar tarea</span>
+        <span className="card-title">Editar recordatorio</span>
 
         <form className="edit-form" onSubmit={handleSubmit}>
           <div>
@@ -105,50 +92,68 @@ function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
 
           <div className="recordatorios-section">
             <div className="recordatorios-header">
-              <label className="field-label">Recordatorios</label>
+              <label className="field-label">Alarmas</label>
               <button type="button" className="btn-add-recordatorio" onClick={agregarRecordatorio}>
                 + Agregar
               </button>
             </div>
             {recordatorios.map((r, i) => (
               <div key={i} className="recordatorio-item">
-                {r.loop ? (
-                  <input
-                    type="time"
-                    value={r.hora ?? ''}
-                    onChange={(e) => actualizarRecordatorio(i, 'hora', e.target.value)}
-                  />
-                ) : (
-                  <input
-                    type="datetime-local"
-                    value={r.fecha_hora}
-                    onChange={(e) => actualizarRecordatorio(i, 'fecha_hora', e.target.value)}
-                  />
-                )}
-                <label className="loop-label">
-                  <input
-                    type="checkbox"
-                    checked={r.loop ?? false}
-                    onChange={(e) => {
-                      const checked = e.target.checked
-                      const nuevos = [...recordatorios]
-                      nuevos[i] = {
-                        ...nuevos[i],
-                        loop: checked,
-                        hora: checked && nuevos[i].fecha_hora
-                          ? new Date(nuevos[i].fecha_hora).toTimeString().slice(0, 5)
-                          : nuevos[i].hora,
-                      }
-                      setRecordatorios(nuevos)
-                    }}
-                  />
-                  Diario
-                </label>
-                <button
-                  type="button"
-                  className="btn-eliminar"
-                  onClick={() => eliminarRecordatorio(i)}
-                >✕</button>
+                <div className="recordatorio-inputs">
+                  {r.loop ? (
+                    <input
+                      type="time"
+                      value={r.hora ?? ''}
+                      onChange={(e) => actualizarRecordatorio(i, 'hora', e.target.value)}
+                    />
+                  ) : (
+                    <input
+                      type="datetime-local"
+                      value={r.fecha_hora}
+                      onChange={(e) => actualizarRecordatorio(i, 'fecha_hora', e.target.value)}
+                    />
+                  )}
+                </div>
+                <div className="recordatorio-controls">
+                  <label className="loop-label">
+                    <input
+                      type="checkbox"
+                      checked={r.loop ?? false}
+                      onChange={(e) => {
+                        const checked = e.target.checked
+                        const nuevos = [...recordatorios]
+                        nuevos[i] = {
+                          ...nuevos[i],
+                          loop: checked,
+                          loop_semanal: false,
+                          hora: checked && nuevos[i].fecha_hora
+                            ? new Date(nuevos[i].fecha_hora).toTimeString().slice(0, 5)
+                            : nuevos[i].hora,
+                        }
+                        setRecordatorios(nuevos)
+                      }}
+                    />
+                    Diario
+                  </label>
+                  <label className="loop-label">
+                    <input
+                      type="checkbox"
+                      checked={r.loop_semanal ?? false}
+                      onChange={(e) => {
+                        const checked = e.target.checked
+                        const nuevos = [...recordatorios]
+                        nuevos[i] = { ...nuevos[i], loop_semanal: checked, loop: false }
+                        setRecordatorios(nuevos)
+                      }}
+                    />
+                    Semanal
+                  </label>
+                  <button
+                    type="button"
+                    className="btn-eliminar"
+                    onClick={() => eliminarRecordatorio(i)}
+                  >✕</button>
+                </div>
               </div>
             ))}
           </div>

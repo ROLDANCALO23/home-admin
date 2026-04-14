@@ -95,6 +95,18 @@ input[type="time"] {
   max-width: 130px;
 }
 
+.recordatorio-inputs input[type="time"],
+.recordatorio-inputs input[type="datetime-local"] {
+  flex: 1;
+  min-width: 0;
+  max-width: none;
+  width: auto;
+}
+
+.recordatorio-controls .btn-eliminar {
+  margin-left: auto;
+}
+
 input:focus {
   border-color: rgba(160, 100, 255, 0.7);
   box-shadow: 0 0 0 3px rgba(140, 80, 255, 0.15);
@@ -130,8 +142,19 @@ input:focus {
 
 .recordatorio-item {
   display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.recordatorio-inputs {
+  display: flex;
   gap: 0.5rem;
+}
+
+.recordatorio-controls {
+  display: flex;
   align-items: center;
+  gap: 0.5rem;
 }
 
 .loop-label {

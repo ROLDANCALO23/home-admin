@@ -14,28 +14,28 @@ function RegistroTareas() {
 
   useEffect(() => {
     supabase
-      .from('tareas')
-      .select('*, recordatorios(*)')
+      .from('recordatorios')
+      .select('*, alarmas(*)')
       .order('orden', { ascending: true })
       .then(({ data, error }) => {
         if (!error) setTareas(data)
       })
 
     const canal = supabase
-      .channel('recordatorios-changes')
-      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'recordatorios' },
+      .channel('alarmas-changes')
+      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'alarmas' },
         (payload) => {
           setTareas(prev => prev.map(t => ({
             ...t,
-            recordatorios: (t.recordatorios ?? []).filter(r => r.id !== payload.old.id),
+            alarmas: (t.alarmas ?? []).filter(r => r.id !== payload.old.id),
           })))
         }
       )
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'recordatorios' },
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'alarmas' },
         (payload) => {
           setTareas(prev => prev.map(t => ({
             ...t,
-            recordatorios: (t.recordatorios ?? []).map(r =>
+            alarmas: (t.alarmas ?? []).map(r =>
               r.id === payload.new.id ? { ...r, ...payload.new } : r
             ),
           })))
@@ -46,7 +46,7 @@ function RegistroTareas() {
     return () => { supabase.removeChannel(canal) }
   }, [])
 
-  const agregarTarea = async ({ recordatorios, ...tarea }) => {
+  const agregarTarea = async ({ alarmas, ...tarea }) => {
     const id = Date.now()
     const nueva = {
       ...tarea,
@@ -54,73 +54,74 @@ function RegistroTareas() {
       fecha_registro: new Date().toISOString(),
       orden: tareas.length,
     }
-    const { error } = await supabase.from('tareas').insert(nueva)
+    const { error } = await supabase.from('recordatorios').insert(nueva)
     if (error) {
-      addToast('No se pudo guardar la tarea', 'error')
+      addToast('No se pudo guardar el recordatorio', 'error')
       return
     }
 
-    let recordatoriosGuardados = []
-    if (recordatorios?.length > 0) {
+    let alarmasGuardadas = []
+    if (alarmas?.length > 0) {
       const { data, error: recErr } = await supabase
-        .from('recordatorios')
-        .insert(recordatorios.map(r => ({
-          tarea_id: id,
+        .from('alarmas')
+        .insert(alarmas.map(r => ({
+          recordatorio_id: id,
           fecha_hora: r.fecha_hora,
           loop: r.loop ?? false,
+          loop_semanal: r.loop_semanal ?? false,
         })))
         .select()
-      if (!recErr && data) recordatoriosGuardados = data
+      if (!recErr && data) alarmasGuardadas = data
     }
 
-    setTareas([...tareas, { ...nueva, recordatorios: recordatoriosGuardados }])
-    addToast('Tarea agregada', 'success')
+    setTareas([...tareas, { ...nueva, alarmas: alarmasGuardadas }])
+    addToast('Recordatorio agregado', 'success')
   }
 
   const eliminarTarea = async (id) => {
-    const { error } = await supabase.from('tareas').delete().eq('id', id)
+    const { error } = await supabase.from('recordatorios').delete().eq('id', id)
     if (error) {
-      addToast('No se pudo eliminar la tarea', 'error')
+      addToast('No se pudo eliminar el recordatorio', 'error')
     } else {
       setTareas(tareas.filter((t) => t.id !== id))
-      addToast('Tarea eliminada', 'success')
+      addToast('Recordatorio eliminado', 'success')
     }
   }
 
-  const editarTarea = async ({ recordatorios, ...tarea }) => {
+  const editarTarea = async ({ alarmas, ...tarea }) => {
     const { error } = await supabase
-      .from('tareas')
+      .from('recordatorios')
       .update({
         descripcion: tarea.descripcion,
         responsable: tarea.responsable,
-        fecha_vencimiento: tarea.fecha_vencimiento,
       })
       .eq('id', tarea.id)
     if (error) {
-      addToast('No se pudo actualizar la tarea', 'error')
+      addToast('No se pudo actualizar el recordatorio', 'error')
       return
     }
 
-    await supabase.from('recordatorios').delete().eq('tarea_id', tarea.id)
+    await supabase.from('alarmas').delete().eq('recordatorio_id', tarea.id)
 
-    let recordatoriosGuardados = []
-    if (recordatorios?.length > 0) {
+    let alarmasGuardadas = []
+    if (alarmas?.length > 0) {
       const { data, error: recErr } = await supabase
-        .from('recordatorios')
-        .insert(recordatorios.map(r => ({
-          tarea_id: tarea.id,
+        .from('alarmas')
+        .insert(alarmas.map(r => ({
+          recordatorio_id: tarea.id,
           fecha_hora: r.fecha_hora,
           loop: r.loop ?? false,
+          loop_semanal: r.loop_semanal ?? false,
         })))
         .select()
-      if (!recErr && data) recordatoriosGuardados = data
+      if (!recErr && data) alarmasGuardadas = data
     }
 
     setTareas(tareas.map(t =>
-      t.id === tarea.id ? { ...tarea, recordatorios: recordatoriosGuardados } : t
+      t.id === tarea.id ? { ...tarea, alarmas: alarmasGuardadas } : t
     ))
     setTareaEditando(null)
-    addToast('Tarea actualizada', 'success')
+    addToast('Recordatorio actualizado', 'success')
   }
 
   const reordenarTareas = async (desde, hasta) => {
@@ -131,7 +132,7 @@ function RegistroTareas() {
     setTareas(conOrden)
 
     const updates = conOrden.map((t) =>
-      supabase.from('tareas').update({ orden: t.orden }).eq('id', t.id)
+      supabase.from('recordatorios').update({ orden: t.orden }).eq('id', t.id)
     )
     await Promise.all(updates)
   }
@@ -148,7 +149,7 @@ function RegistroTareas() {
         />
       )}
       <div className="app-header">
-        <h1>Lista de Tareas</h1>
+        <h1>Recordatorios</h1>
         <p>Organiza y prioriza tus pendientes</p>
       </div>
       <div className="layout">
@@ -158,7 +159,7 @@ function RegistroTareas() {
         <div className="card card--tareas">
           <div className="tareas-header">
             <div className="gastos-titulo-wrap">
-              <span className="gastos-titulo">TAREAS</span>
+              <span className="gastos-titulo">RECORDATORIOS</span>
               {tareas.length > 0 && (
                 <span className="gastos-badge">{tareas.length}</span>
               )}
