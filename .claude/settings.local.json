@@ -5,7 +5,8 @@
       "Bash(cmd:*)",
       "Read(//c/Users/chala/AppData/Roaming/npm/**)",
       "Read(//c/Users/dev/AppData/Roaming/npm/**)",
-      "Bash(/c/Users/chala/AppData/Local/npm-cache/_npx/aa8e5c70f9d8d161/node_modules/supabase/bin/supabase.exe:*)"
+      "Bash(/c/Users/chala/AppData/Local/npm-cache/_npx/aa8e5c70f9d8d161/node_modules/supabase/bin/supabase.exe:*)",
+      "Bash(curl:*)"
     ]
   },
   "enabledMcpjsonServers": [
