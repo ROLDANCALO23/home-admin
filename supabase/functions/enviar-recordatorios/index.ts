@@ -27,7 +27,7 @@ Deno.serve(async () => {
 
   const accountSid    = Deno.env.get('TWILIO_ACCOUNT_SID')!
   const authToken     = Deno.env.get('TWILIO_AUTH_TOKEN')!
-  const from          = 'whatsapp:+14155238886'
+  const from          = 'whatsapp:+16624994231'
   const destinatarios = (Deno.env.get('WHATSAPP_OWNER') ?? '')
     .split(',').map(n => n.trim()).filter(Boolean)
 
