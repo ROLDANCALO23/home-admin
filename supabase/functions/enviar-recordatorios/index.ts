@@ -29,7 +29,7 @@ Deno.serve(async () => {
   const authToken     = Deno.env.get('TWILIO_AUTH_TOKEN')!
   const from          = `whatsapp:${Deno.env.get('WHATSAPP_FROM')!}`
   const destinatarios = (Deno.env.get('WHATSAPP_OWNER') ?? '')
-    .split(',').map(n => n.trim()).filter(Boolean)
+    .split(',').map(n => `whatsapp:${n.trim()}`).filter(Boolean)
 
   for (const rec of alarmas) {
     const descripcion = rec.recordatorios?.descripcion ?? 'recordatorio'
