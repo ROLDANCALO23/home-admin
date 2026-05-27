@@ -3,7 +3,7 @@ import './Sidebar.css'
 
 const PAGES = [
   { id: 'gastos', label: 'Gastos', icon: '💸' },
-  { id: 'tareas', label: 'Recordatorios', icon: '⏰' },
+  { id: 'tareas', label: 'Tareas', icon: '⏰' },
 ]
 
 function Sidebar({ paginaActual, onChangePagina }) {
