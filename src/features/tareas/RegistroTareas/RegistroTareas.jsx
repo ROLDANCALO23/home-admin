@@ -14,7 +14,7 @@ function RegistroTareas() {
 
   useEffect(() => {
     supabase
-      .from('recordatorios')
+      .from('tareas')
       .select('*, alarmas(*)')
       .order('orden', { ascending: true })
       .then(({ data, error }) => {
@@ -54,9 +54,9 @@ function RegistroTareas() {
       fecha_registro: new Date().toISOString(),
       orden: tareas.length,
     }
-    const { error } = await supabase.from('recordatorios').insert(nueva)
+    const { error } = await supabase.from('tareas').insert(nueva)
     if (error) {
-      addToast('No se pudo guardar el recordatorio', 'error')
+      addToast('No se pudo guardar la tarea', 'error')
       return
     }
 
@@ -65,7 +65,7 @@ function RegistroTareas() {
       const { data, error: recErr } = await supabase
         .from('alarmas')
         .insert(alarmas.map(r => ({
-          recordatorio_id: id,
+          tarea_id: id,
           fecha_hora: r.fecha_hora,
           loop: r.loop ?? false,
           loop_semanal: r.loop_semanal ?? false,
@@ -75,40 +75,40 @@ function RegistroTareas() {
     }
 
     setTareas([...tareas, { ...nueva, alarmas: alarmasGuardadas }])
-    addToast('Recordatorio agregado', 'success')
+    addToast('Tarea agregada', 'success')
   }
 
   const eliminarTarea = async (id) => {
-    const { error } = await supabase.from('recordatorios').delete().eq('id', id)
+    const { error } = await supabase.from('tareas').delete().eq('id', id)
     if (error) {
-      addToast('No se pudo eliminar el recordatorio', 'error')
+      addToast('No se pudo eliminar la tarea', 'error')
     } else {
       setTareas(tareas.filter((t) => t.id !== id))
-      addToast('Recordatorio eliminado', 'success')
+      addToast('Tarea eliminada', 'success')
     }
   }
 
   const editarTarea = async ({ alarmas, ...tarea }) => {
     const { error } = await supabase
-      .from('recordatorios')
+      .from('tareas')
       .update({
         descripcion: tarea.descripcion,
         responsable: tarea.responsable,
       })
       .eq('id', tarea.id)
     if (error) {
-      addToast('No se pudo actualizar el recordatorio', 'error')
+      addToast('No se pudo actualizar la tarea', 'error')
       return
     }
 
-    await supabase.from('alarmas').delete().eq('recordatorio_id', tarea.id)
+    await supabase.from('alarmas').delete().eq('tarea_id', tarea.id)
 
     let alarmasGuardadas = []
     if (alarmas?.length > 0) {
       const { data, error: recErr } = await supabase
         .from('alarmas')
         .insert(alarmas.map(r => ({
-          recordatorio_id: tarea.id,
+          tarea_id: tarea.id,
           fecha_hora: r.fecha_hora,
           loop: r.loop ?? false,
           loop_semanal: r.loop_semanal ?? false,
@@ -121,7 +121,7 @@ function RegistroTareas() {
       t.id === tarea.id ? { ...tarea, alarmas: alarmasGuardadas } : t
     ))
     setTareaEditando(null)
-    addToast('Recordatorio actualizado', 'success')
+    addToast('Tarea actualizada', 'success')
   }
 
   const reordenarTareas = async (desde, hasta) => {
@@ -132,7 +132,7 @@ function RegistroTareas() {
     setTareas(conOrden)
 
     const updates = conOrden.map((t) =>
-      supabase.from('recordatorios').update({ orden: t.orden }).eq('id', t.id)
+      supabase.from('tareas').update({ orden: t.orden }).eq('id', t.id)
     )
     await Promise.all(updates)
   }
@@ -149,7 +149,7 @@ function RegistroTareas() {
         />
       )}
       <div className="app-header">
-        <h1>Recordatorios</h1>
+        <h1>Tareas</h1>
         <p>Organiza y prioriza tus pendientes</p>
       </div>
       <div className="layout">
@@ -159,7 +159,7 @@ function RegistroTareas() {
         <div className="card card--tareas">
           <div className="tareas-header">
             <div className="gastos-titulo-wrap">
-              <span className="gastos-titulo">RECORDATORIOS</span>
+              <span className="gastos-titulo">TAREAS</span>
               {tareas.length > 0 && (
                 <span className="gastos-badge">{tareas.length}</span>
               )}

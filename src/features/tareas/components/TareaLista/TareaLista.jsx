@@ -34,9 +34,9 @@ function TareaLista({ tareas, onEliminar, onReordenar, onEditar }) {
     return d.toLocaleDateString('es', { day: '2-digit', month: 'short', year: 'numeric' })
   }
 
-  const ultimoRecordatorio = (recordatorios) => {
-    if (!recordatorios?.length) return null
-    return recordatorios.reduce((max, r) =>
+  const ultimaAlarma = (alarmas) => {
+    if (!alarmas?.length) return null
+    return alarmas.reduce((max, r) =>
       r.fecha_hora > max.fecha_hora ? r : max
     )
   }
@@ -44,21 +44,21 @@ function TareaLista({ tareas, onEliminar, onReordenar, onEditar }) {
   const hoy = new Date().toISOString().split('T')[0]
 
   if (tareas.length === 0) {
-    return <p className="empty">No hay recordatorios pendientes</p>
+    return <p className="empty">No hay tareas pendientes</p>
   }
 
   return (
     <>
     {confirmandoId && (
       <ConfirmDialog
-        mensaje="¿Eliminar este recordatorio?"
+        mensaje="¿Eliminar esta tarea?"
         onConfirmar={() => { onEliminar(confirmandoId); setConfirmandoId(null) }}
         onCancelar={() => setConfirmandoId(null)}
       />
     )}
     <ul className="tarea-lista">
       {tareas.map((tarea, i) => {
-        const ultimo = ultimoRecordatorio(tarea.alarmas)
+        const ultimo = ultimaAlarma(tarea.alarmas)
         const vencida = ultimo && ultimo.fecha_hora.slice(0, 10) < hoy
         return (
           <li

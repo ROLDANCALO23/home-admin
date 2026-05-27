@@ -21,7 +21,7 @@ function horaAFechaHora(hora) {
 function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
   const [descripcion, setDescripcion] = useState(tarea.descripcion)
   const [responsable, setResponsable] = useState(tarea.responsable ?? '')
-  const [recordatorios, setRecordatorios] = useState(
+  const [alarmas, setAlarmas] = useState(
     (tarea.alarmas ?? []).map(r => ({
       ...r,
       fecha_hora: r.loop ? '' : utcToColombiaLocal(r.fecha_hora),
@@ -32,24 +32,24 @@ function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
     }))
   )
 
-  const agregarRecordatorio = () => {
-    setRecordatorios([...recordatorios, { fecha_hora: '', hora: '', loop: false, loop_semanal: false, esExistente: false }])
+  const agregarAlarma = () => {
+    setAlarmas([...alarmas, { fecha_hora: '', hora: '', loop: false, loop_semanal: false, esExistente: false }])
   }
 
-  const actualizarRecordatorio = (i, campo, valor) => {
-    const nuevos = [...recordatorios]
+  const actualizarAlarma = (i, campo, valor) => {
+    const nuevos = [...alarmas]
     nuevos[i] = { ...nuevos[i], [campo]: valor }
-    setRecordatorios(nuevos)
+    setAlarmas(nuevos)
   }
 
-  const eliminarRecordatorio = (i) => {
-    setRecordatorios(recordatorios.filter((_, idx) => idx !== i))
+  const eliminarAlarma = (i) => {
+    setAlarmas(alarmas.filter((_, idx) => idx !== i))
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!descripcion.trim()) return
-    const recs = recordatorios
+    const recs = alarmas
       .map(r => ({
         ...r,
         fecha_hora: r.loop
@@ -68,7 +68,7 @@ function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
   return (
     <div className="edit-overlay" onClick={onCancelar}>
       <div className="edit-dialog" onClick={(e) => e.stopPropagation()}>
-        <span className="card-title">Editar recordatorio</span>
+        <span className="card-title">Editar tarea</span>
 
         <form className="edit-form" onSubmit={handleSubmit}>
           <div>
@@ -90,38 +90,38 @@ function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
             />
           </div>
 
-          <div className="recordatorios-section">
-            <div className="recordatorios-header">
+          <div className="alarmas-section">
+            <div className="alarmas-header">
               <label className="field-label">Alarmas</label>
-              <button type="button" className="btn-add-recordatorio" onClick={agregarRecordatorio}>
+              <button type="button" className="btn-add-alarma" onClick={agregarAlarma}>
                 + Agregar
               </button>
             </div>
-            {recordatorios.map((r, i) => (
-              <div key={i} className="recordatorio-item">
-                <div className="recordatorio-inputs">
+            {alarmas.map((r, i) => (
+              <div key={i} className="alarma-item">
+                <div className="alarma-inputs">
                   {r.loop ? (
                     <input
                       type="time"
                       value={r.hora ?? ''}
-                      onChange={(e) => actualizarRecordatorio(i, 'hora', e.target.value)}
+                      onChange={(e) => actualizarAlarma(i, 'hora', e.target.value)}
                     />
                   ) : (
                     <input
                       type="datetime-local"
                       value={r.fecha_hora}
-                      onChange={(e) => actualizarRecordatorio(i, 'fecha_hora', e.target.value)}
+                      onChange={(e) => actualizarAlarma(i, 'fecha_hora', e.target.value)}
                     />
                   )}
                 </div>
-                <div className="recordatorio-controls">
+                <div className="alarma-controls">
                   <label className="loop-label">
                     <input
                       type="checkbox"
                       checked={r.loop ?? false}
                       onChange={(e) => {
                         const checked = e.target.checked
-                        const nuevos = [...recordatorios]
+                        const nuevos = [...alarmas]
                         nuevos[i] = {
                           ...nuevos[i],
                           loop: checked,
@@ -130,7 +130,7 @@ function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
                             ? new Date(nuevos[i].fecha_hora).toTimeString().slice(0, 5)
                             : nuevos[i].hora,
                         }
-                        setRecordatorios(nuevos)
+                        setAlarmas(nuevos)
                       }}
                     />
                     Diario
@@ -141,9 +141,9 @@ function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
                       checked={r.loop_semanal ?? false}
                       onChange={(e) => {
                         const checked = e.target.checked
-                        const nuevos = [...recordatorios]
+                        const nuevos = [...alarmas]
                         nuevos[i] = { ...nuevos[i], loop_semanal: checked, loop: false }
-                        setRecordatorios(nuevos)
+                        setAlarmas(nuevos)
                       }}
                     />
                     Semanal
@@ -151,7 +151,7 @@ function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
                   <button
                     type="button"
                     className="btn-eliminar"
-                    onClick={() => eliminarRecordatorio(i)}
+                    onClick={() => eliminarAlarma(i)}
                   >✕</button>
                 </div>
               </div>

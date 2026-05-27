@@ -21,19 +21,19 @@
 .btn-agregar:hover { background: #6a4aee; }
 .btn-agregar:active { transform: scale(0.98); }
 
-.recordatorios-section {
+.alarmas-section {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.recordatorios-header {
+.alarmas-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.btn-add-recordatorio {
+.btn-add-alarma {
   font-size: 0.78rem;
   font-weight: 600;
   color: #c4b5fd;
@@ -45,37 +45,37 @@
   transition: background 0.2s;
 }
 
-.btn-add-recordatorio:hover {
+.btn-add-alarma:hover {
   background: rgba(140, 80, 255, 0.2);
 }
 
-.recordatorio-item {
+.alarma-item {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
   padding-top: 0.5rem;
 }
 
-.recordatorio-item + .recordatorio-item {
+.alarma-item + .alarma-item {
   border-top: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-.recordatorio-inputs {
+.alarma-inputs {
   width: 100%;
 }
 
-.recordatorio-inputs input {
+.alarma-inputs input {
   width: 100%;
   box-sizing: border-box;
 }
 
-.recordatorio-controls {
+.alarma-controls {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.recordatorio-controls .btn-eliminar {
+.alarma-controls .btn-eliminar {
   margin-left: auto;
 }
 
@@ -97,7 +97,7 @@
   cursor: pointer;
 }
 
-.recordatorio-item .btn-eliminar {
+.alarma-item .btn-eliminar {
   width: 28px;
   height: 28px;
   display: flex;
@@ -113,7 +113,7 @@
   transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
 
-.recordatorio-item .btn-eliminar:hover {
+.alarma-item .btn-eliminar:hover {
   background: rgba(220, 50, 50, 0.15);
   border-color: rgba(248, 113, 113, 0.4);
   color: #f87171;
@@ -139,8 +139,8 @@ input[type="time"] {
   max-width: 130px;
 }
 
-.recordatorio-inputs input[type="time"],
-.recordatorio-inputs input[type="datetime-local"] {
+.alarma-inputs input[type="time"],
+.alarma-inputs input[type="datetime-local"] {
   width: 100%;
   max-width: none;
   box-sizing: border-box;
@@ -148,12 +148,12 @@ input[type="time"] {
 
 
 @media (max-width: 599px) {
-  .recordatorio-item {
+  .alarma-item {
     flex-wrap: wrap;
   }
 
-  .recordatorio-item input[type="datetime-local"],
-  .recordatorio-item input[type="time"] {
+  .alarma-item input[type="datetime-local"],
+  .alarma-item input[type="time"] {
     font-size: 0.82rem;
     padding: 0.5rem 0.6rem;
   }

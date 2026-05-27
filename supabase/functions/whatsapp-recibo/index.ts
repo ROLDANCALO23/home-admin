@@ -19,11 +19,11 @@ const SYSTEM_PROMPT = `Eres un asistente personal que registra gastos y tareas d
 Si el mensaje empieza con "tarea:" o menciona algo pendiente por hacer (llamar, comprar, ir a, agendar, recordar, pagar, etc.) → usa registrar_tarea.
 Ejemplos: "tarea: llamar al médico", "recordar pagar el arriendo el viernes", "comprar comida para los perros"
 
-## Recordatorios en tareas
-Si el mensaje menciona una hora de aviso o alarma, incluye el campo recordatorios.
-- "recuérdame mañana a las 3pm" → recordatorio con fecha_hora del día siguiente a las 15:00 hora Colombia
-- "avísame todos los días a las 8am" → recordatorio con loop: true
-- "pon alarma para el viernes a las 10am" → recordatorio con fecha_hora del próximo viernes a las 10:00
+## Alarmas en tareas
+Si el mensaje menciona una hora de aviso o alarma, incluye el campo alarmas.
+- "recuérdame mañana a las 3pm" → alarma con fecha_hora del día siguiente a las 15:00 hora Colombia
+- "avísame todos los días a las 8am" → alarma con loop: true
+- "pon alarma para el viernes a las 10am" → alarma con fecha_hora del próximo viernes a las 10:00
 - Las horas en formato YYYY-MM-DDTHH:mm:00 (hora local Colombia, SIN offset ni Z)
 - Si el usuario dice "4pm", escribe T16:00:00. Si dice "8am", escribe T08:00:00. Nunca conviertas a UTC.
 
@@ -80,11 +80,10 @@ const TOOLS = [
     input_schema: {
       type: 'object',
       properties: {
-        descripcion:       { type: 'string', description: 'Qué hay que hacer (máx 120 chars)' },
-        fecha_vencimiento: { type: 'string', description: 'Fecha límite en formato YYYY-MM-DD. Omitir si no se menciona.' },
-        recordatorios: {
+        descripcion:   { type: 'string', description: 'Qué hay que hacer (máx 120 chars)' },
+        alarmas: {
           type: 'array',
-          description: 'Lista de recordatorios/alarmas para esta tarea. Omitir si no se menciona hora.',
+          description: 'Lista de alarmas para esta tarea. Omitir si no se menciona hora.',
           items: {
             type: 'object',
             properties: {
@@ -239,42 +238,40 @@ Deno.serve(async (req: Request) => {
 
     // ── registrar_tarea ──
     if (name === 'registrar_tarea') {
-      const { data: ultimasTareas } = await supabase
+      const { data: ultimos } = await supabase
         .from('tareas')
         .select('orden')
         .order('orden', { ascending: false })
         .limit(1)
 
-      const siguienteOrden = ultimasTareas?.[0]?.orden != null ? ultimasTareas[0].orden + 1 : 0
+      const siguienteOrden = ultimos?.[0]?.orden != null ? ultimos[0].orden + 1 : 0
 
       const tareaId = Date.now()
       const { error } = await supabase.from('tareas').insert({
-        id:                tareaId,
-        descripcion:       String(input.descripcion).slice(0, 120),
-        fecha_vencimiento: input.fecha_vencimiento ?? null,
-        fecha_registro:    new Date().toISOString(),
-        orden:             siguienteOrden,
+        id:             tareaId,
+        descripcion:    String(input.descripcion).slice(0, 120),
+        responsable:    null,
+        fecha_registro: new Date().toISOString(),
+        orden:          siguienteOrden,
       })
 
       if (error) return twimlResponse('Error al guardar la tarea. Intenta de nuevo.')
 
-      // Insertar recordatorios si los hay
-      if (Array.isArray(input.recordatorios) && input.recordatorios.length > 0) {
-        await supabase.from('recordatorios').insert(
-          input.recordatorios.map((r: { fecha_hora: string; loop: boolean }) => ({
-            tarea_id:  tareaId,
-            fecha_hora: colombiaLocalToUTC(r.fecha_hora),
-            loop:       r.loop ?? false,
-            enviado:    false,
+      if (Array.isArray(input.alarmas) && input.alarmas.length > 0) {
+        await supabase.from('alarmas').insert(
+          input.alarmas.map((r: { fecha_hora: string; loop: boolean }) => ({
+            tarea_id: tareaId,
+            fecha_hora:      colombiaLocalToUTC(r.fecha_hora),
+            loop:            r.loop ?? false,
+            loop_semanal:    false,
           }))
         )
       }
 
-      const fechaMsg = input.fecha_vencimiento ? `\n📅 Vence: ${input.fecha_vencimiento}` : ''
-      const recMsg   = input.recordatorios?.length
-        ? `\n🔔 ${input.recordatorios.length} recordatorio(s) programado(s)`
+      const recMsg = input.alarmas?.length
+        ? `\n🔔 ${input.alarmas.length} alarma(s) programada(s)`
         : ''
-      return twimlResponse(`📋 Tarea registrada:\n*${input.descripcion}*${fechaMsg}${recMsg}`)
+      return twimlResponse(`📋 Recordatorio guardado:\n*${input.descripcion}*${recMsg}`)
     }
 
     // ── registrar_gasto: Claude está seguro de todo ──
