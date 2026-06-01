@@ -7,10 +7,90 @@ html, body { overflow-x: hidden; }
   position: fixed;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(135deg, #0f0f1a 0%, #1a1025 50%, #0a0f1a 100%);
-  background-size: cover;
-  background-position: center;
+  background: linear-gradient(160deg, #0b0c16 0%, #0d0e1e 45%, #121324 100%);
   transition: background-image 0.4s ease;
+}
+
+/* Starfield layer 1 – dim white stars */
+.pagina-fondo::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 1px; height: 1px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  pointer-events: none;
+  animation: starPulse 5s ease-in-out infinite alternate;
+  box-shadow:
+    32px 20px,  142px 38px,  298px 51px,  456px 29px,  617px 44px,
+    784px 33px,  943px 55px, 1108px 37px, 1273px 48px, 1441px 26px,
+   1604px 42px, 1751px 31px, 1895px 58px,
+     18px 134px,  167px 149px,  323px 127px,  478px 142px,  641px 131px,
+    801px 153px,  962px 124px, 1122px 145px, 1285px 136px, 1449px 149px,
+   1612px 128px, 1758px 147px, 1901px 130px,
+     44px 247px,  187px 261px,  349px 234px,  504px 252px,  669px 241px,
+    829px 257px,  991px 238px, 1153px 256px, 1317px 243px, 1481px 262px,
+   1645px 248px, 1793px 265px, 1918px 244px,
+     21px 356px,  175px 369px,  337px 343px,  493px 361px,  658px 349px,
+    819px 367px,  980px 352px, 1142px 372px, 1306px 358px, 1471px 376px,
+   1636px 361px, 1783px 378px, 1912px 355px,
+     57px 467px,  199px 481px,  358px 458px,  513px 476px,  678px 463px,
+    838px 479px,  999px 468px, 1161px 487px, 1324px 474px, 1488px 492px,
+   1652px 479px, 1799px 493px,
+     35px 578px,  182px 591px,  344px 565px,  499px 582px,  665px 571px,
+    826px 588px,  987px 577px, 1150px 596px, 1313px 582px, 1478px 599px,
+   1643px 584px, 1789px 603px,
+     63px 688px,  205px 701px,  364px 675px,  519px 692px,  685px 681px,
+    845px 698px, 1006px 687px, 1168px 706px, 1331px 694px, 1495px 713px,
+   1660px 700px, 1807px 717px,
+     41px 798px,  188px 811px,  350px 783px,  505px 802px,  671px 791px,
+    831px 808px,  992px 797px, 1155px 816px, 1318px 803px, 1483px 822px,
+   1648px 810px, 1795px 827px,
+     69px 908px,  211px 921px,  370px 893px,  525px 912px,  691px 901px,
+    851px 918px, 1012px 907px, 1174px 926px, 1337px 913px, 1501px 932px,
+   1666px 920px, 1813px 937px,
+     47px 1018px,  194px 1029px,  356px 1004px,  511px 1021px,  677px 1009px,
+    837px 1026px,  998px 1013px, 1161px 1034px, 1324px 1019px, 1489px 1038px,
+   1654px 1026px, 1801px 1043px;
+}
+
+/* Starfield layer 2 – accented cyan/violet bright stars */
+.pagina-fondo::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 2px; height: 2px;
+  border-radius: 50%;
+  background: rgba(79, 227, 225, 0.85);
+  pointer-events: none;
+  animation: starPulse2 7s ease-in-out infinite alternate-reverse;
+  box-shadow:
+     187px  142px rgba(79, 227, 225, 0.7),
+     523px  384px rgba(91,  78, 255, 0.6),
+     891px   67px rgba(79, 227, 225, 0.8),
+    1247px  441px rgba(91,  78, 255, 0.7),
+    1589px  213px rgba(79, 227, 225, 0.6),
+     342px  731px rgba(91,  78, 255, 0.8),
+     758px  589px rgba(79, 227, 225, 0.7),
+    1124px  861px rgba(91,  78, 255, 0.6),
+    1456px  672px rgba(79, 227, 225, 0.8),
+      67px  512px rgba(91,  78, 255, 0.7),
+     934px  289px rgba(79, 227, 225, 0.6),
+    1312px  157px rgba(91,  78, 255, 0.8),
+     672px  921px rgba(79, 227, 225, 0.7),
+    1678px  834px rgba(91,  78, 255, 0.6),
+    1831px  447px rgba(79, 227, 225, 0.7),
+     421px 1039px rgba(91,  78, 255, 0.8);
+}
+
+@keyframes starPulse {
+  from { opacity: 0.45; }
+  to   { opacity: 1; }
+}
+
+@keyframes starPulse2 {
+  from { opacity: 0.35; }
+  to   { opacity: 0.9; }
 }
 
 
@@ -59,16 +139,20 @@ body {
 
 /* ── Shared components ────────────────────────── */
 .card {
-  background: rgba(20, 10, 40, 0.55);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(160, 100, 255, 0.35);
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0) 55%),
+    rgba(13, 6, 28, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(160, 100, 255, 0.25);
+  border-top-color: rgba(200, 160, 255, 0.45);
   border-radius: 16px;
   padding: 1.5rem;
   box-shadow:
-    0 0 0 1px rgba(160, 100, 255, 0.08),
-    0 0 18px rgba(140, 80, 255, 0.18),
-    0 4px 24px rgba(0, 0, 0, 0.45);
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 0 0 1px rgba(160, 100, 255, 0.06),
+    0 0 28px rgba(140, 80, 255, 0.22),
+    0 8px 40px rgba(0, 0, 0, 0.55);
 }
 
 @media (max-width: 1023px) {
