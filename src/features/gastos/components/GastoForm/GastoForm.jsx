@@ -197,7 +197,7 @@ function GastoForm({ onAgregar, onCategoriaChange, categorias = [], onCambioCate
           <div className="fab-btn-wrap">
             <button
               type="button"
-              className="btn-fab"
+              className="btn-fab btn-fab--sm"
               onClick={() => { setAgregandoCat(true); setEditandoCatId(null) }}
             >＋</button>
             <span className="fab-tooltip">Nueva categoría</span>

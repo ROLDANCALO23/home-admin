@@ -15,7 +15,31 @@
 .alarmas-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 0.4rem;
+}
+
+.alarmas-header .fab-tooltip {
+  right: auto;
+  left: 50%;
+  top: calc(100% + 0.4rem);
+  transform: translateX(-50%) translateY(0);
+  opacity: 0;
+}
+
+.alarmas-header .fab-btn-wrap:hover .fab-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.alarmas-header .fab-tooltip::after {
+  right: auto;
+  left: 50%;
+  top: -5px;
+  bottom: auto;
+  transform: translateX(-50%);
+  border-width: 0 4px 5px 4px;
+  border-color: transparent transparent rgba(79, 227, 225, 0.4) transparent;
 }
 
 .btn-agregar {

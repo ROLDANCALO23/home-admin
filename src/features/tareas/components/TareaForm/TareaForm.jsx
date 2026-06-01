@@ -78,7 +78,7 @@ function TareaForm({ onAgregar }) {
         <div className="alarmas-header">
           <label className="field-label">Alarmas</label>
           <div className="fab-btn-wrap">
-            <button type="button" className="btn-fab" onClick={agregarAlarma}>＋</button>
+            <button type="button" className="btn-fab btn-fab--sm" onClick={agregarAlarma}>＋</button>
             <span className="fab-tooltip">Agregar alarma</span>
           </div>
         </div>
