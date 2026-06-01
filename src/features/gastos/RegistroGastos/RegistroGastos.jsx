@@ -143,21 +143,15 @@ function RegistroGastos() {
       <div className="layout">
         <div className="card card--gastos">
           <div className="gastos-header">
-            <div className="gastos-titulo-wrap">
-              <span className="gastos-titulo">GASTOS</span>
-              {gastosFiltrados.length > 0 && (
-                <span className="gastos-badge">{gastosFiltrados.length}</span>
-              )}
-            </div>
-            <button className="btn-nuevo-gasto" onClick={() => setFormAbierto(true)}>
-              ＋ Nuevo gasto
-            </button>
             <FiltroRango
               desde={desde}
               hasta={hasta}
               onChangeDe={setDesde}
               onChangeHasta={setHasta}
             />
+            <button className="btn-nuevo-gasto" onClick={() => setFormAbierto(true)}>
+              ＋ Nuevo gasto
+            </button>
           </div>
           <div className="gastos-scroll">
             <GastoLista

@@ -128,37 +128,6 @@
   justify-content: space-between;
 }
 
-.gastos-titulo-wrap {
-  position: relative;
-  flex-shrink: 0;
-  padding-top: 0.5rem;
-}
-
-.gastos-titulo {
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: #fff;
-}
-
-.gastos-badge {
-  position: absolute;
-  top: -2px;
-  right: -14px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 4px;
-  background: #f97316;
-  border-radius: 999px;
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  box-shadow: 0 0 8px rgba(249, 115, 22, 0.6);
-}
 
 .gastos-header .filtro-rango {
   flex-shrink: 0;
