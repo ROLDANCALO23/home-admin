@@ -149,6 +149,13 @@ function RegistroGastos() {
               onChangeDe={setDesde}
               onChangeHasta={setHasta}
             />
+            <div className="fab-zone">
+              <span className="fab-arrows">›  ›  ›</span>
+              <div className="fab-btn-wrap">
+                <button className="btn-fab" onClick={() => setFormAbierto(true)}>＋</button>
+                <span className="fab-tooltip">Nuevo gasto</span>
+              </div>
+            </div>
           </div>
           <div className="gastos-scroll">
             <GastoLista
@@ -164,13 +171,6 @@ function RegistroGastos() {
               <ResumenCategorias gastos={gastosFiltrados} categorias={categorias} />
             </>
           )}
-          <div className="fab-zone">
-            <span className="fab-arrows">›  ›  ›</span>
-            <div className="fab-btn-wrap">
-              <button className="btn-fab" onClick={() => setFormAbierto(true)}>＋</button>
-              <span className="fab-tooltip">Nuevo gasto</span>
-            </div>
-          </div>
         </div>
       </div>
     </div>

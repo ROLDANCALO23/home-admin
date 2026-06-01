@@ -164,19 +164,21 @@ function RegistroTareas() {
       </div>
       <div className="layout">
         <div className="card card--tareas">
+          <div className="tareas-header">
+            <div className="fab-zone">
+              <span className="fab-arrows">›  ›  ›</span>
+              <div className="fab-btn-wrap">
+                <button className="btn-fab" onClick={() => setFormAbierto(true)}>＋</button>
+                <span className="fab-tooltip">Nueva tarea</span>
+              </div>
+            </div>
+          </div>
           <TareaLista
             tareas={tareas}
             onEliminar={eliminarTarea}
             onReordenar={reordenarTareas}
             onEditar={setTareaEditando}
           />
-          <div className="fab-zone">
-            <span className="fab-arrows">›  ›  ›</span>
-            <div className="fab-btn-wrap">
-              <button className="btn-fab" onClick={() => setFormAbierto(true)}>＋</button>
-              <span className="fab-tooltip">Nueva tarea</span>
-            </div>
-          </div>
         </div>
       </div>
     </div>

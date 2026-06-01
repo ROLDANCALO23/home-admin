@@ -212,7 +212,6 @@ input:focus {
   align-items: center;
   justify-content: flex-end;
   gap: 0.7rem;
-  padding-top: 1.1rem;
 }
 
 .fab-arrows {
