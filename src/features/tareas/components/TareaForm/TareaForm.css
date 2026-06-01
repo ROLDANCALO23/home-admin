@@ -18,21 +18,22 @@
   justify-content: space-between;
 }
 
-.btn-add-alarma {
-  font-size: 0.78rem;
+.btn-agregar {
+  padding: 0.72rem;
+  background: linear-gradient(140deg, #6c57ff 0%, #38b6f0 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
   font-weight: 600;
-  color: #c4b5fd;
-  background: rgba(140, 80, 255, 0.1);
-  border: 1px solid rgba(160, 100, 255, 0.3);
-  border-radius: 8px;
-  padding: 0.25rem 0.65rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: opacity 0.2s, transform 0.1s;
+  margin-top: 0.25rem;
+  width: 100%;
+  box-shadow: 0 0 14px rgba(91, 78, 255, 0.35);
 }
-
-.btn-add-alarma:hover {
-  background: rgba(140, 80, 255, 0.2);
-}
+.btn-agregar:hover  { opacity: 0.88; }
+.btn-agregar:active { transform: scale(0.98); }
 
 .alarma-item {
   display: flex;

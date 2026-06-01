@@ -77,9 +77,10 @@ function TareaForm({ onAgregar }) {
       <div className="alarmas-section">
         <div className="alarmas-header">
           <label className="field-label">Alarmas</label>
-          <button type="button" className="btn-add-alarma" onClick={agregarAlarma}>
-            + Agregar
-          </button>
+          <div className="fab-btn-wrap">
+            <button type="button" className="btn-fab" onClick={agregarAlarma}>＋</button>
+            <span className="fab-tooltip">Agregar alarma</span>
+          </div>
         </div>
 
         {alarmas.map((r, i) => (
@@ -143,13 +144,7 @@ function TareaForm({ onAgregar }) {
         ))}
       </div>
 
-      <div className="fab-zone">
-        <span className="fab-arrows">›  ›  ›</span>
-        <div className="fab-btn-wrap">
-          <button type="submit" className="btn-fab">＋</button>
-          <span className="fab-tooltip">Agregar tarea</span>
-        </div>
-      </div>
+      <button type="submit" className="btn-agregar">Guardar</button>
     </form>
   )
 }

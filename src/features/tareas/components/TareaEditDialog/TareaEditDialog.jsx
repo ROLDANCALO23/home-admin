@@ -93,9 +93,10 @@ function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
           <div className="alarmas-section">
             <div className="alarmas-header">
               <label className="field-label">Alarmas</label>
-              <button type="button" className="btn-add-alarma" onClick={agregarAlarma}>
-                + Agregar
-              </button>
+              <div className="fab-btn-wrap">
+                <button type="button" className="btn-fab" onClick={agregarAlarma}>＋</button>
+                <span className="fab-tooltip">Agregar alarma</span>
+              </div>
             </div>
             {alarmas.map((r, i) => (
               <div key={i} className="alarma-item">

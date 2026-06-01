@@ -194,13 +194,14 @@ function GastoForm({ onAgregar, onCategoriaChange, categorias = [], onCambioCate
       <div>
         <div className="cat-section-header">
           <label className="field-label" style={{ margin: 0 }}>Categoría</label>
-          <button
-            type="button"
-            className="btn-nueva-cat-inline"
-            onClick={() => { setAgregandoCat(true); setEditandoCatId(null) }}
-          >
-            + Nueva
-          </button>
+          <div className="fab-btn-wrap">
+            <button
+              type="button"
+              className="btn-fab"
+              onClick={() => { setAgregandoCat(true); setEditandoCatId(null) }}
+            >＋</button>
+            <span className="fab-tooltip">Nueva categoría</span>
+          </div>
         </div>
 
         {(agregandoCat || editandoCatId) && (
@@ -271,13 +272,7 @@ function GastoForm({ onAgregar, onCategoriaChange, categorias = [], onCambioCate
         </div>
       </div>
 
-      <div className="fab-zone">
-        <span className="fab-arrows">›  ›  ›</span>
-        <div className="fab-btn-wrap">
-          <button type="submit" className="btn-fab">＋</button>
-          <span className="fab-tooltip">Agregar gasto</span>
-        </div>
-      </div>
+      <button type="submit" className="btn-agregar">Guardar</button>
     </form>
   )
 }
