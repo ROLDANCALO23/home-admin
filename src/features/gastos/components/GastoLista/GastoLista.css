@@ -1,10 +1,13 @@
 .gasto-grupos {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  overflow: hidden;
 }
 
 .gasto-grupo {
   border-bottom: 1px solid rgba(160, 100, 255, 0.1);
+  min-width: 0;
 }
 
 .gasto-grupo:last-child {
@@ -13,6 +16,7 @@
 
 .gasto-grupo-header {
   width: 100%;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: 0.55rem;
@@ -23,6 +27,7 @@
   text-align: left;
   transition: background 0.15s;
   border-radius: 8px;
+  min-width: 0;
 }
 
 .gasto-grupo-header:hover {
@@ -41,6 +46,10 @@
   font-weight: 600;
   color: var(--text-primary);
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .gasto-cat-count {
@@ -76,14 +85,17 @@
   flex-direction: column;
   padding: 0 0.25rem 0.5rem 1.95rem;
   gap: 0;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .gasto-item {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.5rem;
   padding: 0.5rem 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  min-width: 0;
 }
 
 .gasto-item:last-child {
@@ -186,6 +198,36 @@
   font-size: 0.88rem;
   font-weight: 700;
   color: var(--text-primary);
+}
+
+@media (max-width: 599px) {
+  .gasto-grupo-header {
+    gap: 0.35rem;
+    padding: 0.6rem 0;
+  }
+
+  .gasto-cat-count {
+    display: none;
+  }
+
+  .gasto-cat-total {
+    font-size: 0.82rem;
+  }
+
+  .gasto-grupo-items {
+    padding-left: 1.4rem;
+  }
+
+  .gasto-item {
+    gap: 0.35rem;
+  }
+
+  .btn-editar,
+  .btn-eliminar {
+    width: 22px;
+    height: 22px;
+    font-size: 0.7rem;
+  }
 }
 
 .empty-state {
