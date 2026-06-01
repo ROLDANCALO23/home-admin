@@ -130,7 +130,7 @@ function RegistroGastos() {
         }
       />
       <div className="app-header">
-        <h1>Registro de Gastos</h1>
+        <h1>Gastos</h1>
         <p>Controla tus gastos y organízalos por categoría</p>
       </div>
 
