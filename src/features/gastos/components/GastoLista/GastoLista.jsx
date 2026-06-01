@@ -18,7 +18,7 @@ const EmptyState = () => (
   </div>
 )
 
-function GastoLista({ gastos, onEliminar, onEditar, categorias = [] }) {
+function GastoLista({ gastos, cargando, onEliminar, onEditar, categorias = [] }) {
   const [expandidas, setExpandidas] = useState(new Set())
 
   const toggle = (valor) => {
@@ -28,6 +28,8 @@ function GastoLista({ gastos, onEliminar, onEditar, categorias = [] }) {
       return next
     })
   }
+
+  if (cargando) return <div className="loading-wrap"><div className="spinner" /></div>
 
   if (gastos.length === 0) return <EmptyState />
 

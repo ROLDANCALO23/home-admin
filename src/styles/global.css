@@ -365,3 +365,24 @@ input:focus {
   background: rgba(124, 92, 252, 0.28);
   color: var(--text-primary);
 }
+
+/* ── Loading spinner ── */
+.loading-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 0;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(160, 100, 255, 0.15);
+  border-top-color: rgba(124, 92, 252, 0.9);
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

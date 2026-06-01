@@ -9,6 +9,7 @@ import './RegistroTareas.css'
 
 function RegistroTareas() {
   const [tareas, setTareas] = useState([])
+  const [cargando, setCargando] = useState(true)
   const [tareaEditando, setTareaEditando] = useState(null)
   const [formAbierto, setFormAbierto] = useState(false)
   const [filtroResponsable, setFiltroResponsable] = useState('todos')
@@ -29,6 +30,7 @@ function RegistroTareas() {
       .order('orden', { ascending: true })
       .then(({ data, error }) => {
         if (!error) setTareas(data)
+        setCargando(false)
       })
 
     const canal = supabase
@@ -197,6 +199,7 @@ function RegistroTareas() {
           </div>
           <TareaLista
             tareas={tareasFiltradas}
+            cargando={cargando}
             onEliminar={eliminarTarea}
             onReordenar={reordenarTareas}
             onEditar={setTareaEditando}

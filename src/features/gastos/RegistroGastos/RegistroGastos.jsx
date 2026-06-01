@@ -11,6 +11,7 @@ import './RegistroGastos.css'
 
 function RegistroGastos() {
   const [gastos, setGastos] = useState([])
+  const [cargando, setCargando] = useState(true)
   const [categorias, setCategorias] = useState([])
   const hoy = new Date()
   const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1).toISOString().split('T')[0]
@@ -38,6 +39,7 @@ function RegistroGastos() {
       .order('fecha', { ascending: false })
       .then(({ data, error }) => {
         if (!error) setGastos(data.map((g) => ({ ...g, fecha: new Date(g.fecha) })))
+        setCargando(false)
       })
   }, [])
 
@@ -179,6 +181,7 @@ function RegistroGastos() {
           <div className="gastos-scroll">
             <GastoLista
               gastos={gastosFiltrados}
+              cargando={cargando}
               categorias={categorias}
               onEliminar={setConfirmarId}
               onEditar={setGastoEditando}

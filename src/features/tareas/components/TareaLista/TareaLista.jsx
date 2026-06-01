@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import ConfirmDialog from '../../../../components/ConfirmDialog'
 import './TareaLista.css'
 
-function TareaLista({ tareas, onEliminar, onReordenar, onEditar }) {
+function TareaLista({ tareas, cargando, onEliminar, onReordenar, onEditar }) {
   const dragIndex = useRef(null)
   const [draggingOver, setDraggingOver] = useState(null)
   const [confirmandoId, setConfirmandoId] = useState(null)
@@ -42,6 +42,10 @@ function TareaLista({ tareas, onEliminar, onReordenar, onEditar }) {
   }
 
   const hoy = new Date().toISOString().split('T')[0]
+
+  if (cargando) {
+    return <div className="loading-wrap"><div className="spinner" /></div>
+  }
 
   if (tareas.length === 0) {
     return <p className="empty">No hay tareas pendientes</p>
