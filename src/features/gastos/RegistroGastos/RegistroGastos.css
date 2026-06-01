@@ -31,12 +31,12 @@
 
 /* ── Nuevo gasto button ── */
 .btn-nuevo-gasto {
-  padding: 0.4rem 0.9rem;
-  border-radius: 10px;
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
   border: 1px solid rgba(160, 100, 255, 0.5);
   background: rgba(124, 92, 252, 0.2);
   color: #fff;
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s;
@@ -121,7 +121,7 @@
 
 .gastos-header {
   display: flex;
-  align-items: flex-start;
+  align-items: flex-end;
   gap: 0.75rem;
   flex-shrink: 0;
   margin-bottom: 0.5rem;
