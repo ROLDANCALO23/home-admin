@@ -23,6 +23,7 @@ function RegistroGastos() {
   const { toasts, addToast } = useToast()
   const [confirmarId, setConfirmarId] = useState(null)
   const [gastoEditando, setGastoEditando] = useState(null)
+  const [formAbierto, setFormAbierto] = useState(false)
 
   const cargarCategorias = async () => {
     const { data, error } = await supabase.from('categorias').select('*').order('orden')
@@ -47,6 +48,7 @@ function RegistroGastos() {
       addToast('No se pudo guardar el gasto', 'error')
     } else {
       setGastos([nuevo, ...gastos])
+      setFormAbierto(false)
       addToast('Gasto agregado correctamente', 'success')
     }
   }
@@ -124,15 +126,21 @@ function RegistroGastos() {
         <p>Controla tus gastos y organízalos por categoría</p>
       </div>
 
-      <div className="layout">
-        <div className="card">
-          <GastoForm
-            categorias={categorias}
-            onAgregar={agregarGasto}
-            onCategoriaChange={setCategoriaSeleccionada}
-            onCambioCategorias={cargarCategorias}
-          />
+      {formAbierto && (
+        <div className="form-overlay" onClick={() => setFormAbierto(false)}>
+          <div className="form-dialog" onClick={e => e.stopPropagation()}>
+            <button className="form-dialog-cerrar" onClick={() => setFormAbierto(false)}>✕</button>
+            <GastoForm
+              categorias={categorias}
+              onAgregar={agregarGasto}
+              onCategoriaChange={setCategoriaSeleccionada}
+              onCambioCategorias={cargarCategorias}
+            />
+          </div>
         </div>
+      )}
+
+      <div className="layout">
         <div className="card card--gastos">
           <div className="gastos-header">
             <div className="gastos-titulo-wrap">
@@ -141,6 +149,9 @@ function RegistroGastos() {
                 <span className="gastos-badge">{gastosFiltrados.length}</span>
               )}
             </div>
+            <button className="btn-nuevo-gasto" onClick={() => setFormAbierto(true)}>
+              ＋ Nuevo gasto
+            </button>
             <FiltroRango
               desde={desde}
               hasta={hasta}

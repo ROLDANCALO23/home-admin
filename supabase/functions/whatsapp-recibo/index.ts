@@ -16,20 +16,29 @@ const OPCIONES_CATEGORIA = CATEGORIAS
 const SYSTEM_PROMPT = `Eres un asistente personal que registra gastos y tareas del hogar en Colombia.
 
 ## Cuándo registrar una TAREA
-Si el mensaje empieza con "tarea:" o menciona algo pendiente por hacer (llamar, comprar, ir a, agendar, recordar, pagar, etc.) → usa registrar_tarea.
-Ejemplos: "tarea: llamar al médico", "recordar pagar el arriendo el viernes", "comprar comida para los perros"
+Usa registrar_tarea si el mensaje describe algo pendiente por hacer, sin importar cómo esté redactado.
+Ejemplos: "llamar al médico mañana", "pagar el arriendo el viernes", "comprar comida para los perros a las 6pm", "sacar la basura", "recu érdame llamar a las 3".
+No necesitas palabras clave especiales — si hay una acción pendiente, es una tarea.
 
 ## Alarmas en tareas
-Si el mensaje menciona una hora de aviso o alarma, incluye el campo alarmas.
-- "recuérdame mañana a las 3pm" → alarma con fecha_hora del día siguiente a las 15:00 hora Colombia
-- "avísame todos los días a las 8am" → alarma con loop: true
-- "pon alarma para el viernes a las 10am" → alarma con fecha_hora del próximo viernes a las 10:00
-- Las horas en formato YYYY-MM-DDTHH:mm:00 (hora local Colombia, SIN offset ni Z)
-- Si el usuario dice "4pm", escribe T16:00:00. Si dice "8am", escribe T08:00:00. Nunca conviertas a UTC.
+Si el mensaje menciona una hora, día o fecha, agrega una alarma a la tarea.
+
+Alarma diaria (loop: true):
+- Solo se necesita la hora, no el día.
+- "todos los días a las 8am", "cada día a las 6pm", "diario a las 7" → loop: true, fecha_hora con la próxima ocurrencia de esa hora.
+
+Alarma puntual (loop: false):
+- Se necesita día y hora.
+- "mañana a las 3pm", "el viernes a las 10am", "el 5 de junio a las 9" → loop: false, fecha_hora con esa fecha y hora exactas.
+- Si solo mencionan hora sin día → asume hoy si la hora aún no pasó, mañana si ya pasó.
+
+Formato fecha_hora: YYYY-MM-DDTHH:mm:00 en hora local Colombia, SIN offset ni Z.
+Ejemplos: 4pm → T16:00:00 · 8am → T08:00:00. Nunca conviertas a UTC.
 
 ## Cuándo registrar un GASTO
-Si el mensaje tiene un monto o es una foto de recibo → usa registrar_gasto o solicitar_categoria.
-Ejemplos: "almuerzo 35000", "25k uber", foto de recibo
+Usa registrar_gasto o solicitar_categoria si el mensaje tiene un monto en dinero o es foto de recibo.
+Ejemplos: "almuerzo 35000", "25k uber", foto de recibo.
+Si el mensaje tiene monto Y una acción pendiente, prioriza registrar_gasto.
 
 ## Categorías de gastos válidas:
 - comida → restaurantes, domicilios, mercado, cafés, snacks
@@ -207,20 +216,23 @@ Deno.serve(async (req: Request) => {
       )
     }
 
-    // Llamar a Claude con tool use
     const claudeResponse = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'x-api-key':          Deno.env.get('ANTHROPIC_API_KEY')!,
-        'anthropic-version':  '2023-06-01',
-        'content-type':       'application/json',
+        'x-api-key':         Deno.env.get('ANTHROPIC_API_KEY')!,
+        'anthropic-version': '2023-06-01',
+        'anthropic-beta':    'prompt-caching-2024-07-31',
+        'content-type':      'application/json',
       },
       body: JSON.stringify({
-        model:       'claude-sonnet-4-6',
-        max_tokens:  1024,
-        system:      SYSTEM_PROMPT,
-        tools:       TOOLS,
-        tool_choice: { type: 'any' }, // fuerza siempre el uso de una herramienta
+        model:      'claude-sonnet-4-6',
+        max_tokens: 1024,
+        system: [{ type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
+        tools: [
+          ...TOOLS.slice(0, -1),
+          { ...TOOLS[TOOLS.length - 1], cache_control: { type: 'ephemeral' } },
+        ],
+        tool_choice: { type: 'any' },
         messages:    [{ role: 'user', content: claudeContent }],
       }),
     })
@@ -271,7 +283,7 @@ Deno.serve(async (req: Request) => {
       const recMsg = input.alarmas?.length
         ? `\n🔔 ${input.alarmas.length} alarma(s) programada(s)`
         : ''
-      return twimlResponse(`📋 Recordatorio guardado:\n*${input.descripcion}*${recMsg}`)
+      return twimlResponse(`📋 Tarea guardada:\n*${input.descripcion}*${recMsg}`)
     }
 
     // ── registrar_gasto: Claude está seguro de todo ──
