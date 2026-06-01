@@ -143,13 +143,7 @@ function TareaForm({ onAgregar }) {
         ))}
       </div>
 
-      <div className="fab-zone">
-        <span className="fab-arrows">›  ›  ›</span>
-        <div className="fab-btn-wrap">
-          <button type="submit" className="btn-fab">＋</button>
-          <span className="fab-tooltip">Nueva tarea</span>
-        </div>
-      </div>
+      <button type="submit" className="btn-agregar">Agregar tarea</button>
     </form>
   )
 }

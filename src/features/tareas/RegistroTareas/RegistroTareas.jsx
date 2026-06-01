@@ -10,6 +10,7 @@ import './RegistroTareas.css'
 function RegistroTareas() {
   const [tareas, setTareas] = useState([])
   const [tareaEditando, setTareaEditando] = useState(null)
+  const [formAbierto, setFormAbierto] = useState(false)
   const { toasts, addToast } = useToast()
 
   useEffect(() => {
@@ -75,6 +76,7 @@ function RegistroTareas() {
     }
 
     setTareas([...tareas, { ...nueva, alarmas: alarmasGuardadas }])
+    setFormAbierto(false)
     addToast('Tarea agregada', 'success')
   }
 
@@ -148,29 +150,33 @@ function RegistroTareas() {
           onCancelar={() => setTareaEditando(null)}
         />
       )}
+      {formAbierto && (
+        <div className="form-overlay" onClick={() => setFormAbierto(false)}>
+          <div className="form-dialog" onClick={e => e.stopPropagation()}>
+            <button className="form-dialog-cerrar" onClick={() => setFormAbierto(false)}>✕</button>
+            <TareaForm onAgregar={agregarTarea} />
+          </div>
+        </div>
+      )}
       <div className="app-header">
         <h1>Tareas</h1>
         <p>Organiza y prioriza tus pendientes</p>
       </div>
       <div className="layout">
-        <div className="card">
-          <TareaForm onAgregar={agregarTarea} />
-        </div>
         <div className="card card--tareas">
-          <div className="tareas-header">
-            <div className="gastos-titulo-wrap">
-              <span className="gastos-titulo">TAREAS</span>
-              {tareas.length > 0 && (
-                <span className="gastos-badge">{tareas.length}</span>
-              )}
-            </div>
-          </div>
           <TareaLista
             tareas={tareas}
             onEliminar={eliminarTarea}
             onReordenar={reordenarTareas}
             onEditar={setTareaEditando}
           />
+          <div className="fab-zone">
+            <span className="fab-arrows">›  ›  ›</span>
+            <div className="fab-btn-wrap">
+              <button className="btn-fab" onClick={() => setFormAbierto(true)}>＋</button>
+              <span className="fab-tooltip">Nueva tarea</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
