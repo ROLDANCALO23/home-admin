@@ -255,22 +255,6 @@ input[type="date"]:focus {
   box-shadow: 0 0 0 3px rgba(140, 80, 255, 0.15);
 }
 
-.btn-agregar {
-  padding: 0.75rem;
-  background: #7c5cfc;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-  margin-top: 0.25rem;
-  width: 100%;
-}
-
-.btn-agregar:hover { background: #6a4aee; }
-.btn-agregar:active { transform: scale(0.98); }
 
 @media (max-width: 599px) {
   .categoria-grid {

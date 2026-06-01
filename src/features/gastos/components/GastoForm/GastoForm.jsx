@@ -271,7 +271,13 @@ function GastoForm({ onAgregar, onCategoriaChange, categorias = [], onCambioCate
         </div>
       </div>
 
-      <button type="submit" className="btn-agregar">Agregar gasto</button>
+      <div className="fab-zone">
+        <span className="fab-arrows">›  ›  ›</span>
+        <div className="fab-btn-wrap">
+          <button type="submit" className="btn-fab">＋</button>
+          <span className="fab-tooltip">Agregar gasto</span>
+        </div>
+      </div>
     </form>
   )
 }

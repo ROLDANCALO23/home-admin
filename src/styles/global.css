@@ -270,35 +270,32 @@ input:focus {
 }
 
 .btn-fab {
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  border: none;
-  background: linear-gradient(135deg, #5b4eff 0%, #3bb8f5 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: linear-gradient(140deg, #6c57ff 0%, #38b6f0 100%);
   color: #fff;
-  font-size: 1.45rem;
+  font-size: 1.15rem;
   line-height: 1;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow:
-    0 0 18px rgba(91, 78, 255, 0.55),
-    0 0 36px rgba(79, 227, 225, 0.18),
-    0 4px 14px rgba(0, 0, 0, 0.4);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+    0 0 12px rgba(91, 78, 255, 0.5),
+    0 0 24px rgba(79, 227, 225, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  flex-shrink: 0;
 }
 
 .btn-fab:hover {
   transform: scale(1.1);
   box-shadow:
-    0 0 24px rgba(91, 78, 255, 0.75),
-    0 0 48px rgba(79, 227, 225, 0.28),
-    0 6px 20px rgba(0, 0, 0, 0.45);
+    0 0 18px rgba(91, 78, 255, 0.7),
+    0 0 36px rgba(79, 227, 225, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-.btn-fab:active { transform: scale(0.96); }
-
-@media (max-width: 599px) {
-  .btn-fab { width: 44px; height: 44px; font-size: 1.3rem; }
-}
+.btn-fab:active { transform: scale(0.94); }
