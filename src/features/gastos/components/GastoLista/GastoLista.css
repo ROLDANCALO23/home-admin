@@ -1,12 +1,33 @@
-.gasto-item {
+.gasto-grupos {
   display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.6rem 0;
-  border-bottom: 1px solid rgba(160, 100, 255, 0.12);
+  flex-direction: column;
 }
 
-.gasto-item:last-child { border-bottom: none; }
+.gasto-grupo {
+  border-bottom: 1px solid rgba(160, 100, 255, 0.1);
+}
+
+.gasto-grupo:last-child {
+  border-bottom: none;
+}
+
+.gasto-grupo-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.65rem 0.25rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+  border-radius: 8px;
+}
+
+.gasto-grupo-header:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
 
 .gasto-cat-emoji {
   font-size: 1rem;
@@ -15,10 +36,64 @@
   text-align: center;
 }
 
-.gasto-descripcion {
+.gasto-cat-nombre {
   font-size: 0.88rem;
+  font-weight: 600;
   color: var(--text-primary);
-  font-weight: 500;
+  flex: 1;
+}
+
+.gasto-cat-count {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+  flex-shrink: 0;
+}
+
+.gasto-cat-total {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+.gasto-chevron {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.gasto-grupo--abierto .gasto-chevron {
+  color: var(--text-purple);
+}
+
+.gasto-grupo-items {
+  display: flex;
+  flex-direction: column;
+  padding: 0 0.25rem 0.5rem 1.95rem;
+  gap: 0;
+}
+
+.gasto-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.gasto-item:last-child {
+  border-bottom: none;
+}
+
+.gasto-descripcion {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 400;
   flex: 1;
   white-space: nowrap;
   overflow: hidden;
@@ -27,30 +102,30 @@
 }
 
 .gasto-fecha {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: var(--text-muted);
   flex-shrink: 0;
 }
 
 .gasto-monto {
-  font-size: 0.88rem;
-  font-weight: 700;
+  font-size: 0.85rem;
+  font-weight: 600;
   color: var(--text-primary);
   flex-shrink: 0;
 }
 
 .btn-editar {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 7px;
   color: var(--text-muted);
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   flex-shrink: 0;
   transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
@@ -62,17 +137,18 @@
 }
 
 .btn-eliminar {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 7px;
   color: var(--text-muted);
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
+  flex-shrink: 0;
   transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
 
@@ -100,58 +176,4 @@
   font-size: 0.85rem;
   font-weight: 400;
   letter-spacing: 0.2px;
-}
-
-@media (max-width: 599px) {
-  .gasto-item {
-    display: grid;
-    grid-template-columns: 1.4rem 1fr auto auto;
-    grid-template-rows: auto auto;
-    column-gap: 0.45rem;
-    row-gap: 0.1rem;
-    align-items: center;
-  }
-
-  .gasto-cat-emoji {
-    grid-column: 1;
-    grid-row: 1 / 3;
-    align-self: center;
-  }
-
-  .gasto-descripcion {
-    grid-column: 2;
-    grid-row: 1;
-    font-size: 0.83rem;
-  }
-
-  .gasto-fecha {
-    grid-column: 2;
-    grid-row: 2;
-    display: block;
-    font-size: 0.68rem;
-  }
-
-  .gasto-monto {
-    grid-column: 3 / 5;
-    grid-row: 1;
-    font-size: 0.8rem;
-    text-align: right;
-  }
-
-  .btn-editar {
-    grid-column: 3;
-    grid-row: 2;
-    width: 22px;
-    height: 22px;
-    font-size: 0.7rem;
-    justify-self: end;
-  }
-
-  .btn-eliminar {
-    grid-column: 4;
-    grid-row: 2;
-    width: 22px;
-    height: 22px;
-    font-size: 0.7rem;
-  }
 }
