@@ -11,7 +11,16 @@ function RegistroTareas() {
   const [tareas, setTareas] = useState([])
   const [tareaEditando, setTareaEditando] = useState(null)
   const [formAbierto, setFormAbierto] = useState(false)
+  const [filtroResponsable, setFiltroResponsable] = useState('todos')
   const { toasts, addToast } = useToast()
+
+  const responsables = ['todos', ...Array.from(
+    new Set(tareas.map(t => t.responsable).filter(Boolean))
+  )]
+
+  const tareasFiltradas = filtroResponsable === 'todos'
+    ? tareas
+    : tareas.filter(t => t.responsable === filtroResponsable)
 
   useEffect(() => {
     supabase
@@ -165,6 +174,19 @@ function RegistroTareas() {
       <div className="layout">
         <div className="card card--tareas">
           <div className="tareas-header">
+            {responsables.length > 1 && (
+              <div className="responsable-filtro">
+                {responsables.map(r => (
+                  <button
+                    key={r}
+                    className={`resp-pill${filtroResponsable === r ? ' resp-pill--activo' : ''}`}
+                    onClick={() => setFiltroResponsable(r)}
+                  >
+                    {r === 'todos' ? 'Todos' : r}
+                  </button>
+                ))}
+              </div>
+            )}
             <div className="fab-zone">
               <span className="fab-arrows">›  ›  ›</span>
               <div className="fab-btn-wrap">
@@ -174,7 +196,7 @@ function RegistroTareas() {
             </div>
           </div>
           <TareaLista
-            tareas={tareas}
+            tareas={tareasFiltradas}
             onEliminar={eliminarTarea}
             onReordenar={reordenarTareas}
             onEditar={setTareaEditando}
