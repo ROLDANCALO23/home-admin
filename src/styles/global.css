@@ -226,6 +226,7 @@ input:focus {
   align-items: center;
   justify-content: flex-end;
   gap: 0.7rem;
+  margin-left: auto;
 }
 
 .fab-arrows {
