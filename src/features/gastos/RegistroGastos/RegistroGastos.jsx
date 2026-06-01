@@ -19,6 +19,7 @@ function RegistroGastos() {
   const [desde, setDesde] = useState(primerDiaMes)
   const [hasta, setHasta] = useState(hoyStr)
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('')
+  const [filtroResponsable, setFiltroResponsable] = useState('todos')
   const { toasts, addToast } = useToast()
   const [confirmarId, setConfirmarId] = useState(null)
   const [gastoEditando, setGastoEditando] = useState(null)
@@ -84,11 +85,16 @@ function RegistroGastos() {
     }
   }
 
+  const responsables = ['todos', ...Array.from(
+    new Set(gastos.map(g => g.responsable).filter(Boolean))
+  )]
+
   const gastosFiltrados = gastos
     .filter((g) => {
       const fecha = new Date(g.fecha)
       if (desde && fecha < new Date(desde + 'T00:00:00')) return false
       if (hasta && fecha > new Date(hasta + 'T23:59:59')) return false
+      if (filtroResponsable !== 'todos' && g.responsable !== filtroResponsable) return false
       return true
     })
     .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
@@ -143,6 +149,19 @@ function RegistroGastos() {
       <div className="layout">
         <div className="card card--gastos">
           <div className="gastos-header">
+            {responsables.length > 1 && (
+              <div className="responsable-filtro">
+                {responsables.map(r => (
+                  <button
+                    key={r}
+                    className={`resp-pill${filtroResponsable === r ? ' resp-pill--activo' : ''}`}
+                    onClick={() => setFiltroResponsable(r)}
+                  >
+                    {r === 'todos' ? 'Todos' : r}
+                  </button>
+                ))}
+              </div>
+            )}
             <div className="fab-zone">
               <span className="fab-arrows">›  ›  ›</span>
               <div className="fab-btn-wrap">

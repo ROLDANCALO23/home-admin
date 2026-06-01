@@ -29,40 +29,6 @@
   gap: 0.5rem;
 }
 
-.responsable-filtro {
-  display: flex;
-  border: 1px solid rgba(160, 100, 255, 0.3);
-  border-radius: 10px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.resp-pill {
-  padding: 0.3rem 0.85rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  border-right: 1px solid rgba(160, 100, 255, 0.2);
-  background: transparent;
-  color: var(--text-secondary);
-  transition: background 0.18s, color 0.18s;
-  white-space: nowrap;
-}
-
-.resp-pill:last-child {
-  border-right: none;
-}
-
-.resp-pill:hover {
-  background: rgba(160, 100, 255, 0.1);
-  color: var(--text-primary);
-}
-
-.resp-pill--activo {
-  background: rgba(124, 92, 252, 0.28);
-  color: var(--text-primary);
-}
 
 .card--tareas::after {
   content: '✦';
