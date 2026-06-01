@@ -14,7 +14,7 @@
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.07);
-  color: #fff;
+  color: var(--text-primary);
   font-size: 0.82rem;
   cursor: pointer;
   transition: background 0.15s;
@@ -41,7 +41,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-secondary);
   transition: background 0.15s;
 }
 
@@ -108,7 +108,7 @@
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 0.875rem;
   padding: 0.45rem 0.65rem;
   outline: none;
@@ -137,7 +137,7 @@
 .cat-input--valor {
   flex: 1;
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-secondary);
 }
 
 .cat-colores {
@@ -202,13 +202,13 @@
 
 .cat-item-label {
   font-size: 0.9rem;
-  color: #fff;
+  color: var(--text-primary);
   flex: 1;
 }
 
 .cat-item-valor {
   font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--text-muted);
   font-family: monospace;
 }
 
@@ -225,7 +225,7 @@
   border-radius: 7px;
   border: none;
   background: rgba(140, 80, 255, 0.15);
-  color: rgba(140, 80, 255, 0.8);
+  color: var(--text-purple);
   font-size: 0.85rem;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
@@ -233,7 +233,7 @@
 
 .btn-editar:hover {
   background: rgba(140, 80, 255, 0.3);
-  color: #c084fc;
+  color: var(--text-purple);
 }
 
 .btn-eliminar {
@@ -242,7 +242,7 @@
   border-radius: 7px;
   border: none;
   background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--text-muted);
   font-size: 0.75rem;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
@@ -250,7 +250,7 @@
 
 .btn-eliminar:hover {
   background: rgba(239, 68, 68, 0.18);
-  color: #f87171;
+  color: var(--text-error);
 }
 
 .btn-confirmar-eliminar {
@@ -258,7 +258,7 @@
   border-radius: 6px;
   border: none;
   background: #ef4444;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 0.75rem;
   cursor: pointer;
 }
@@ -269,7 +269,7 @@
   border-radius: 6px;
   border: none;
   background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-secondary);
   font-size: 0.75rem;
   cursor: pointer;
 }

@@ -19,14 +19,14 @@
 
 .resumen-label {
   font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
   flex: 1;
 }
 
 .resumen-total {
   font-size: 0.88rem;
   font-weight: 600;
-  color: #c4b5fd;
+  color: var(--text-purple);
   flex-shrink: 0;
 }
 
@@ -39,5 +39,5 @@
   border-top: 1px solid #ffffff;
   font-size: 0.95rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
 }

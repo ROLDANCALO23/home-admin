@@ -17,7 +17,7 @@
 
 .gasto-descripcion {
   font-size: 0.88rem;
-  color: #fff;
+  color: var(--text-primary);
   font-weight: 500;
   flex: 1;
   white-space: nowrap;
@@ -28,14 +28,14 @@
 
 .gasto-fecha {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-muted);
   flex-shrink: 0;
 }
 
 .gasto-monto {
   font-size: 0.88rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
   flex-shrink: 0;
 }
 
@@ -48,7 +48,7 @@
   background: none;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
-  color: rgba(255, 255, 255, 0.25);
+  color: var(--text-muted);
   cursor: pointer;
   font-size: 0.85rem;
   flex-shrink: 0;
@@ -58,7 +58,7 @@
 .btn-editar:hover {
   background: rgba(140, 80, 255, 0.15);
   border-color: rgba(160, 100, 255, 0.4);
-  color: #c4b5fd;
+  color: var(--text-purple);
 }
 
 .btn-eliminar {
@@ -70,7 +70,7 @@
   background: none;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
-  color: rgba(255, 255, 255, 0.25);
+  color: var(--text-muted);
   cursor: pointer;
   font-size: 0.8rem;
   transition: background 0.2s, color 0.2s, border-color 0.2s;
@@ -79,7 +79,7 @@
 .btn-eliminar:hover {
   background: rgba(220, 50, 50, 0.15);
   border-color: rgba(248, 113, 113, 0.4);
-  color: #f87171;
+  color: var(--text-error);
 }
 
 .empty-state {
@@ -96,7 +96,7 @@
 }
 
 .empty-msg {
-  color: rgba(255, 255, 255, 0.28);
+  color: var(--text-muted);
   font-size: 0.85rem;
   font-weight: 400;
   letter-spacing: 0.2px;

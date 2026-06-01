@@ -32,7 +32,7 @@
   position: absolute;
   bottom: -14px;
   right: 2rem;
-  color: #4fe3e1;
+  color: var(--text-cyan);
   font-size: 0.95rem;
   pointer-events: none;
   filter: drop-shadow(0 0 6px rgba(79, 227, 225, 0.9));
@@ -91,7 +91,7 @@
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--text-secondary);
   font-size: 0.8rem;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
@@ -99,7 +99,7 @@
 
 .registro-tareas .form-dialog-cerrar:hover {
   background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  color: var(--text-primary);
 }
 
 @keyframes fade-in {

@@ -45,7 +45,7 @@
 .btn-agregar {
   padding: 0.72rem;
   background: linear-gradient(140deg, #6c57ff 0%, #38b6f0 100%);
-  color: #fff;
+  color: var(--text-primary);
   border: none;
   border-radius: 10px;
   font-size: 0.9rem;
@@ -94,7 +94,7 @@
   align-items: center;
   gap: 0.35rem;
   font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--text-secondary);
   white-space: nowrap;
   cursor: pointer;
   flex-shrink: 0;
@@ -116,7 +116,7 @@
   background: none;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
-  color: rgba(255, 255, 255, 0.25);
+  color: var(--text-muted);
   cursor: pointer;
   font-size: 0.8rem;
   flex-shrink: 0;
@@ -126,7 +126,7 @@
 .alarma-item .btn-eliminar:hover {
   background: rgba(220, 50, 50, 0.15);
   border-color: rgba(248, 113, 113, 0.4);
-  color: #f87171;
+  color: var(--text-error);
 }
 
 input[type="date"],
@@ -138,7 +138,7 @@ input[type="time"] {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(160, 100, 255, 0.3);
   border-radius: 10px;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 0.95rem;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;

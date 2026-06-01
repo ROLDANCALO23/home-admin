@@ -15,7 +15,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-secondary);
 }
 
 input[type="date"] {
@@ -24,7 +24,7 @@ input[type="date"] {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(160, 100, 255, 0.25);
   border-radius: 8px;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 0.85rem;
   cursor: pointer;
   outline: none;

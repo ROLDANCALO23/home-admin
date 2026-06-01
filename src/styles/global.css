@@ -1,3 +1,17 @@
+/* ── Design tokens ────────────────────────────── */
+:root {
+  --text-primary:     #ffffff;
+  --text-secondary:   rgba(255, 255, 255, 0.78);
+  --text-muted:       rgba(255, 255, 255, 0.42);
+  --text-placeholder: rgba(255, 255, 255, 0.22);
+  --text-cyan:        #4fe3e1;
+  --text-purple:      #c4b5fd;
+  --text-success:     #4ade80;
+  --text-error:       #f87171;
+  --text-warning:     #fbbf24;
+  --text-orange:      #f97316;
+}
+
 /* ── Reset & base ─────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -103,7 +117,7 @@ html, body { overflow-x: hidden; }
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  color: #fff;
+  color: var(--text-primary);
   min-height: 100vh;
 }
 
@@ -169,7 +183,7 @@ body {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #fff;
+  color: var(--text-primary);
   margin-bottom: 1rem;
 }
 
@@ -179,7 +193,7 @@ body {
   gap: 0.3rem;
   padding: 0.2rem 0.65rem;
   background: #1e1a2e;
-  color: #a78bfa;
+  color: var(--text-purple);
   border: 1px solid #3b2f6e;
   border-radius: 20px;
   font-size: 0.78rem;
@@ -193,13 +207,13 @@ input[type="number"] {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(160, 100, 255, 0.3);
   border-radius: 10px;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 0.95rem;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-input::placeholder { color: rgba(255, 255, 255, 0.25); }
+input::placeholder { color: var(--text-placeholder); }
 
 input:focus {
   border-color: rgba(160, 100, 255, 0.7);
@@ -215,7 +229,7 @@ input:focus {
 }
 
 .fab-arrows {
-  color: rgba(79, 227, 225, 0.35);
+  color: var(--text-cyan);
   font-size: 0.88rem;
   letter-spacing: 3px;
   font-weight: 700;
@@ -240,7 +254,7 @@ input:focus {
   transform: translateY(-50%) translateX(4px);
   background: rgba(10, 5, 22, 0.9);
   border: 1px solid rgba(79, 227, 225, 0.35);
-  color: #4fe3e1;
+  color: var(--text-cyan);
   font-size: 0.73rem;
   font-weight: 600;
   padding: 0.28rem 0.62rem;
@@ -275,7 +289,7 @@ input:focus {
   border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.15);
   background: linear-gradient(140deg, #6c57ff 0%, #38b6f0 100%);
-  color: #fff;
+  color: var(--text-primary);
   font-size: 1.15rem;
   line-height: 1;
   cursor: pointer;

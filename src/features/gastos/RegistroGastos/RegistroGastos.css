@@ -13,13 +13,13 @@
   font-size: 1.9rem;
   font-weight: 700;
   letter-spacing: -0.5px;
-  color: #fff;
+  color: var(--text-primary);
   margin: 0 0 0.25rem;
 }
 
 .app-header p {
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--text-muted);
 }
 
 .layout {
@@ -43,7 +43,7 @@
   position: absolute;
   bottom: -14px;
   right: 2rem;
-  color: #4fe3e1;
+  color: var(--text-cyan);
   font-size: 0.95rem;
   pointer-events: none;
   filter: drop-shadow(0 0 6px rgba(79, 227, 225, 0.9));
@@ -137,7 +137,7 @@
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--text-secondary);
   font-size: 0.8rem;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
@@ -145,7 +145,7 @@
 
 .form-dialog-cerrar:hover {
   background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  color: var(--text-primary);
 }
 
 @keyframes fade-in {
