@@ -143,12 +143,6 @@ function RegistroGastos() {
       <div className="layout">
         <div className="card card--gastos">
           <div className="gastos-header">
-            <FiltroRango
-              desde={desde}
-              hasta={hasta}
-              onChangeDe={setDesde}
-              onChangeHasta={setHasta}
-            />
             <div className="fab-zone">
               <span className="fab-arrows">›  ›  ›</span>
               <div className="fab-btn-wrap">
@@ -157,6 +151,12 @@ function RegistroGastos() {
               </div>
             </div>
           </div>
+          <FiltroRango
+            desde={desde}
+            hasta={hasta}
+            onChangeDe={setDesde}
+            onChangeHasta={setHasta}
+          />
           <div className="gastos-scroll">
             <GastoLista
               gastos={gastosFiltrados}

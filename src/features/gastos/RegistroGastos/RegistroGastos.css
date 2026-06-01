@@ -59,13 +59,7 @@
 .gastos-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  flex-shrink: 0;
-  margin-bottom: 0.75rem;
-}
-
-.gastos-header .filtro-rango {
+  justify-content: flex-end;
   flex-shrink: 0;
 }
 
@@ -169,16 +163,6 @@
   .app-header h1 { font-size: 1.35rem; }
   .app-header { margin-bottom: 1.25rem; }
   .layout { gap: 1rem; }
-
-  .gastos-header {
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .gastos-header .filtro-rango {
-    width: 100%;
-    flex-shrink: 1;
-  }
 
   .gastos-scroll {
     max-height: 260px;
