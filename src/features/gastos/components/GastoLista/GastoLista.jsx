@@ -37,8 +37,10 @@ function GastoLista({ gastos, onEliminar, onEditar, categorias = [] }) {
 
   const sinCat = gastos.filter(g => !categorias.find(c => c.valor === g.categoria))
   if (sinCat.length > 0) {
-    grupos.push({ cat: { valor: '__sin', nombre: 'Sin categoría', emoji: '📌' }, items: sinCat })
+    grupos.push({ cat: { valor: '__sin', label: 'Sin categoría', emoji: '📌' }, items: sinCat })
   }
+
+  const totalGeneral = gastos.reduce((sum, g) => sum + g.monto, 0)
 
   return (
     <div className="gasto-grupos">
@@ -49,7 +51,7 @@ function GastoLista({ gastos, onEliminar, onEditar, categorias = [] }) {
           <div key={cat.valor} className={`gasto-grupo${abierto ? ' gasto-grupo--abierto' : ''}`}>
             <button className="gasto-grupo-header" onClick={() => toggle(cat.valor)}>
               <span className="gasto-cat-emoji">{cat.emoji}</span>
-              <span className="gasto-cat-nombre">{cat.nombre}</span>
+              <span className="gasto-cat-nombre">{cat.label}</span>
               <span className="gasto-cat-count">{items.length}</span>
               <span className="gasto-cat-total">{formatCOP(total)}</span>
               <span className="gasto-chevron">{abierto ? '▲' : '▼'}</span>
@@ -72,6 +74,10 @@ function GastoLista({ gastos, onEliminar, onEditar, categorias = [] }) {
           </div>
         )
       })}
+      <div className="gasto-total-general">
+        <span>Total</span>
+        <span>{formatCOP(totalGeneral)}</span>
+      </div>
     </div>
   )
 }

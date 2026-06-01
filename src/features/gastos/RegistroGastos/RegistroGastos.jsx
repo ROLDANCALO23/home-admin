@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import GastoForm from '../components/GastoForm'
 import GastoLista from '../components/GastoLista'
-import ResumenCategorias from '../components/ResumenCategorias'
 import FiltroRango from '../components/FiltroRango'
 import ToastContainer from '../components/ToastContainer'
 import ConfirmDialog from '../../../components/ConfirmDialog'
@@ -165,12 +164,6 @@ function RegistroGastos() {
               onEditar={setGastoEditando}
             />
           </div>
-          {gastosFiltrados.length > 0 && (
-            <>
-              <hr className="separador" />
-              <ResumenCategorias gastos={gastosFiltrados} categorias={categorias} />
-            </>
-          )}
         </div>
       </div>
     </div>

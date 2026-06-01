@@ -158,6 +158,18 @@
   color: var(--text-error);
 }
 
+.gasto-total-general {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 0.25rem 0.1rem;
+  border-top: 1px solid rgba(160, 100, 255, 0.2);
+  margin-top: 0.25rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
 .empty-state {
   display: flex;
   flex-direction: column;
