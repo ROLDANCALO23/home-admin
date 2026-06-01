@@ -60,10 +60,17 @@ function GastoLista({ gastos, onEliminar, onEditar, categorias = [] }) {
               <div className="gasto-grupo-items">
                 {items.map(gasto => (
                   <div key={gasto.id} className="gasto-item">
-                    <span className="gasto-descripcion">{gasto.descripcion}</span>
-                    <span className="gasto-fecha">
-                      {gasto.fecha.toLocaleDateString('es', { day: '2-digit', month: 'short', year: 'numeric' })}
-                    </span>
+                    <div className="gasto-info">
+                      <span className="gasto-descripcion">{gasto.descripcion}</span>
+                      <div className="gasto-meta">
+                        <span className="gasto-fecha">
+                          {gasto.fecha.toLocaleDateString('es', { day: '2-digit', month: 'short', year: 'numeric' })}
+                        </span>
+                        {gasto.responsable && (
+                          <span className="gasto-responsable">{gasto.responsable}</span>
+                        )}
+                      </div>
+                    </div>
                     <span className="gasto-monto">{formatCOP(gasto.monto)}</span>
                     <button className="btn-editar" onClick={() => onEditar(gasto)}>✎</button>
                     <button className="btn-eliminar" onClick={() => onEliminar(gasto.id)}>✕</button>

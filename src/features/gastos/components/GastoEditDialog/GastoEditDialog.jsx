@@ -11,6 +11,7 @@ function GastoEditDialog({ gasto, onGuardar, onCancelar, categorias = [] }) {
   const [monto, setMonto] = useState(gasto.monto)
   const [categoria, setCategoria] = useState(gasto.categoria)
   const [fecha, setFecha] = useState(fechaInicial)
+  const [responsable, setResponsable] = useState(gasto.responsable ?? '')
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -21,6 +22,7 @@ function GastoEditDialog({ gasto, onGuardar, onCancelar, categorias = [] }) {
       monto: parseFloat(monto),
       categoria,
       fecha: new Date(fecha + 'T12:00:00'),
+      responsable: responsable.trim() || null,
     })
   }
 
@@ -57,6 +59,16 @@ function GastoEditDialog({ gasto, onGuardar, onCancelar, categorias = [] }) {
               value={fecha}
               max={hoy}
               onChange={(e) => setFecha(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="field-label">Responsable</label>
+            <input
+              type="text"
+              placeholder="¿Quién realizó este gasto?"
+              value={responsable}
+              onChange={(e) => setResponsable(e.target.value)}
             />
           </div>
 

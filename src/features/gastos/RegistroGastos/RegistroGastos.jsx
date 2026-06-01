@@ -60,6 +60,7 @@ function RegistroGastos() {
         monto: gasto.monto,
         categoria: gasto.categoria,
         fecha: gasto.fecha,
+        responsable: gasto.responsable ?? null,
       })
       .eq('id', gasto.id)
     if (error) {
