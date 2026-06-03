@@ -164,7 +164,7 @@ function RegisterPage({ onVolver, onRegistrado }) {
               >
                 {PAISES.map((p, i) => (
                   <option key={i} value={p.code}>
-                    {p.flag} {p.name} ({p.code})
+                    {p.flag} {p.code}
                   </option>
                 ))}
               </select>

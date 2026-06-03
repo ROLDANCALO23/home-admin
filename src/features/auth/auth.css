@@ -135,8 +135,8 @@
 
 .auth-tel-select {
   flex-shrink: 0;
-  max-width: 155px;
-  padding: 0.65rem 2rem 0.65rem 0.75rem;
+  max-width: 105px;
+  padding: 0.65rem 1.75rem 0.65rem 0.75rem;
   background: rgba(255, 255, 255, 0.04);
   border: none;
   border-right: 1px solid rgba(160, 100, 255, 0.2);
