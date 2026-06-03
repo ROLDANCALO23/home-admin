@@ -2,6 +2,35 @@ import { useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import './auth.css'
 
+const PAISES = [
+  { code: '+57',  flag: '🇨🇴', name: 'Colombia' },
+  { code: '+51',  flag: '🇵🇪', name: 'Perú' },
+  { code: '+54',  flag: '🇦🇷', name: 'Argentina' },
+  { code: '+56',  flag: '🇨🇱', name: 'Chile' },
+  { code: '+52',  flag: '🇲🇽', name: 'México' },
+  { code: '+34',  flag: '🇪🇸', name: 'España' },
+  { code: '+58',  flag: '🇻🇪', name: 'Venezuela' },
+  { code: '+593', flag: '🇪🇨', name: 'Ecuador' },
+  { code: '+591', flag: '🇧🇴', name: 'Bolivia' },
+  { code: '+598', flag: '🇺🇾', name: 'Uruguay' },
+  { code: '+595', flag: '🇵🇾', name: 'Paraguay' },
+  { code: '+506', flag: '🇨🇷', name: 'Costa Rica' },
+  { code: '+507', flag: '🇵🇦', name: 'Panamá' },
+  { code: '+502', flag: '🇬🇹', name: 'Guatemala' },
+  { code: '+504', flag: '🇭🇳', name: 'Honduras' },
+  { code: '+503', flag: '🇸🇻', name: 'El Salvador' },
+  { code: '+505', flag: '🇳🇮', name: 'Nicaragua' },
+  { code: '+53',  flag: '🇨🇺', name: 'Cuba' },
+  { code: '+1',   flag: '🇺🇸', name: 'Estados Unidos' },
+  { code: '+1',   flag: '🇨🇦', name: 'Canadá' },
+  { code: '+44',  flag: '🇬🇧', name: 'Reino Unido' },
+  { code: '+49',  flag: '🇩🇪', name: 'Alemania' },
+  { code: '+33',  flag: '🇫🇷', name: 'Francia' },
+  { code: '+39',  flag: '🇮🇹', name: 'Italia' },
+  { code: '+55',  flag: '🇧🇷', name: 'Brasil' },
+  { code: '+351', flag: '🇵🇹', name: 'Portugal' },
+]
+
 const EyeOpen = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -21,7 +50,7 @@ function RegisterPage({ onVolver, onRegistrado }) {
   const [password, setPassword] = useState('')
   const [mostrarPassword, setMostrarPassword] = useState(false)
   const [celular, setCelular] = useState('')
-  const [codigoPais, setCodigoPais] = useState('')
+  const [codigoPais, setCodigoPais] = useState('+57')
   const [codigoGrupo, setCodigoGrupo] = useState('')
   const [error, setError] = useState('')
   const [mensaje, setMensaje] = useState('')
@@ -55,8 +84,8 @@ function RegisterPage({ onVolver, onRegistrado }) {
       password,
       options: {
         data: {
-          celular: celular.trim(),
-          pais: codigoPais.trim(),
+          celular: `${codigoPais} ${celular.trim()}`,
+          pais: codigoPais,
           group_id: groupId,
         },
       },
@@ -128,15 +157,17 @@ function RegisterPage({ onVolver, onRegistrado }) {
           <div className="auth-field">
             <label>Celular</label>
             <div className="auth-tel-wrap">
-              <input
-                type="text"
-                className="auth-tel-code"
+              <select
+                className="auth-tel-select"
                 value={codigoPais}
                 onChange={e => setCodigoPais(e.target.value)}
-                placeholder="+57"
-                maxLength={5}
-                required
-              />
+              >
+                {PAISES.map((p, i) => (
+                  <option key={i} value={p.code}>
+                    {p.flag} {p.name} ({p.code})
+                  </option>
+                ))}
+              </select>
               <input
                 type="text"
                 className="auth-tel-numero"
