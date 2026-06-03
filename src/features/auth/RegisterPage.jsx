@@ -127,23 +127,25 @@ function RegisterPage({ onVolver, onRegistrado }) {
           </div>
           <div className="auth-field">
             <label>Celular</label>
-            <input
-              type="text"
-              value={celular}
-              onChange={e => setCelular(e.target.value)}
-              placeholder="300 000 0000"
-              required
-            />
-          </div>
-          <div className="auth-field">
-            <label>Código de país</label>
-            <input
-              type="text"
-              value={codigoPais}
-              onChange={e => setCodigoPais(e.target.value)}
-              placeholder="+57, +51, +54…"
-              required
-            />
+            <div className="auth-tel-wrap">
+              <input
+                type="text"
+                className="auth-tel-code"
+                value={codigoPais}
+                onChange={e => setCodigoPais(e.target.value)}
+                placeholder="+57"
+                maxLength={5}
+                required
+              />
+              <input
+                type="text"
+                className="auth-tel-numero"
+                value={celular}
+                onChange={e => setCelular(e.target.value)}
+                placeholder="300 000 0000"
+                required
+              />
+            </div>
           </div>
           <div className="auth-field">
             <label>
