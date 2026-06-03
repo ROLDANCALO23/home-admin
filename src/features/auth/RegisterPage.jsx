@@ -173,7 +173,6 @@ function RegisterPage({ onVolver, onRegistrado }) {
                 className="auth-tel-numero"
                 value={celular}
                 onChange={e => setCelular(e.target.value)}
-                placeholder="300 000 0000"
                 required
               />
             </div>
