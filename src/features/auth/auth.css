@@ -116,13 +116,27 @@
   box-shadow: 0 0 0 3px rgba(140, 80, 255, 0.15), 0 0 10px rgba(140, 80, 255, 0.2);
 }
 
+/* Reset global input styles that conflict inside the wrapper */
+.auth-tel-wrap input[type="text"] {
+  width: auto;
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
+.auth-tel-wrap input[type="text"]:focus {
+  border-color: transparent;
+  box-shadow: none;
+}
+
 .auth-tel-code {
   width: 72px;
   flex-shrink: 0;
   padding: 0.65rem 0.6rem;
   background: rgba(255, 255, 255, 0.04);
-  border: none;
-  border-right: 1px solid rgba(160, 100, 255, 0.2);
+  border-right: 1px solid rgba(160, 100, 255, 0.2) !important;
   color: var(--text-primary);
   font-size: 0.95rem;
   font-weight: 600;
@@ -134,8 +148,6 @@
   flex: 1;
   min-width: 0;
   padding: 0.65rem 0.9rem;
-  background: none;
-  border: none;
   color: var(--text-primary);
   font-size: 0.95rem;
   outline: none;
