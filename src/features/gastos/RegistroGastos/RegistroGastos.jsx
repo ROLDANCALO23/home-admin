@@ -52,6 +52,15 @@ function RegistroGastos() {
       setGastos([nuevo, ...gastos])
       setFormAbierto(false)
       addToast('Gasto agregado correctamente', 'success')
+      supabase.functions.invoke('notificar-gasto', {
+        body: {
+          descripcion: gasto.descripcion,
+          monto: gasto.monto,
+          categoria: gasto.categoria,
+          responsable: gasto.responsable ?? null,
+          fecha: gasto.fecha instanceof Date ? gasto.fecha.toISOString() : gasto.fecha,
+        },
+      })
     }
   }
 
