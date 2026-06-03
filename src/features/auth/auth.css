@@ -101,6 +101,34 @@
   color: var(--text-placeholder);
 }
 
+.auth-password-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.auth-password-wrap input {
+  padding-right: 2.6rem;
+}
+
+.auth-eye {
+  position: absolute;
+  right: 0.65rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  transition: color 0.18s;
+  line-height: 1;
+}
+
+.auth-eye:hover {
+  color: var(--text-secondary);
+}
+
 .auth-select {
   width: 100%;
   padding: 0.65rem 0.9rem;
