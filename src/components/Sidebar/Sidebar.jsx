@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { supabase } from '../../lib/supabase'
 import './Sidebar.css'
 
 const PAGES = [
@@ -37,6 +38,12 @@ function Sidebar({ paginaActual, onChangePagina }) {
             </li>
           ))}
         </ul>
+        <div className="sidebar-bottom">
+          <button className="sidebar-logout" onClick={() => supabase.auth.signOut()}>
+            <span className="sidebar-icon">🚪</span>
+            <span className="sidebar-label">Salir</span>
+          </button>
+        </div>
       </nav>
     </>
   )
