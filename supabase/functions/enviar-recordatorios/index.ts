@@ -10,7 +10,7 @@ Deno.serve(async () => {
 
   const { data: alarmas, error } = await supabase
     .from('alarmas')
-    .select('*, tareas(id, descripcion)')
+    .select('*, tareas(id, descripcion, group_id)')
     .lte('fecha_hora', now.toISOString())
     .eq('enviado', false)
 
@@ -21,11 +21,11 @@ Deno.serve(async () => {
   const authToken   = Deno.env.get('TWILIO_AUTH_TOKEN')!
   const from        = `whatsapp:${Deno.env.get('WHATSAPP_FROM')!.trim()}`
   const templateSid = Deno.env.get('TWILIO_TEMPLATE_SID')!
-  const destinatarios = (Deno.env.get('WHATSAPP_OWNER') ?? '')
-    .split(',').map(n => `whatsapp:${n.trim()}`).filter(Boolean)
 
   for (const rec of alarmas) {
     const descripcion = rec.tareas?.descripcion ?? 'tarea'
+    const groupId     = rec.tareas?.group_id ?? null
+
     let textoVariable: string
 
     if (rec.loop) {
@@ -43,27 +43,38 @@ Deno.serve(async () => {
       await supabase.from('alarmas').delete().eq('id', rec.id)
     }
 
-    if (destinatarios.length) {
-      await Promise.all(destinatarios.map(async to => {
-        const params = new URLSearchParams({
-          From: from,
-          To: to,
-          ContentSid: templateSid,
-          ContentVariables: JSON.stringify({ '1': textoVariable }),
-        })
-        console.log('Enviando a Twilio:', Object.fromEntries(params))
-        const res = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`, {
-          method: 'POST',
-          headers: {
-            Authorization: 'Basic ' + btoa(`${accountSid}:${authToken}`),
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: params.toString(),
-        })
-        const data = await res.json()
-        console.log('Respuesta Twilio:', JSON.stringify(data))
-      }))
-    }
+    if (!groupId) continue
+
+    const { data: miembros } = await supabase
+      .from('perfiles')
+      .select('celular')
+      .eq('group_id', groupId)
+
+    const destinatarios = (miembros ?? [])
+      .map((m: { celular: string }) => `whatsapp:${m.celular.trim()}`)
+      .filter(Boolean)
+
+    if (!destinatarios.length) continue
+
+    await Promise.all(destinatarios.map(async (to: string) => {
+      const params = new URLSearchParams({
+        From: from,
+        To: to,
+        ContentSid: templateSid,
+        ContentVariables: JSON.stringify({ '1': textoVariable }),
+      })
+      console.log('Enviando a Twilio:', Object.fromEntries(params))
+      const res = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`, {
+        method: 'POST',
+        headers: {
+          Authorization: 'Basic ' + btoa(`${accountSid}:${authToken}`),
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: params.toString(),
+      })
+      const data = await res.json()
+      console.log('Respuesta Twilio:', JSON.stringify(data))
+    }))
   }
 
   return new Response(`OK - procesados: ${alarmas.length}`)

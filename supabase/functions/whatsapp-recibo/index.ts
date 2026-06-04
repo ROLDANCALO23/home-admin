@@ -126,6 +126,34 @@ function colombiaLocalToUTC(fechaHora: string): string {
   return new Date(asIfUTC.getTime() + 5 * 60 * 60 * 1000).toISOString() // suma 5h → UTC real
 }
 
+function notificarGasto(params: {
+  supabaseUrl: string
+  serviceKey: string
+  descripcion: string
+  monto: number
+  categoria: string
+  fecha: string
+  groupId: number
+  excluir: string
+}) {
+  const { supabaseUrl, serviceKey, ...body } = params
+  fetch(`${supabaseUrl}/functions/v1/notificar-gasto`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${serviceKey}`,
+    },
+    body: JSON.stringify({
+      descripcion: body.descripcion,
+      monto:       body.monto,
+      categoria:   body.categoria,
+      fecha:       body.fecha,
+      group_id:    body.groupId,
+      excluir:     body.excluir,
+    }),
+  }).catch(err => console.error('notificar-gasto error:', err))
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 })
@@ -137,9 +165,24 @@ Deno.serve(async (req: Request) => {
   )
 
   try {
-    const formData = await req.formData()
-    const mediaUrl = formData.get('MediaUrl0') as string | null
-    const body = (formData.get('Body') as string ?? '').trim()
+    const formData   = await req.formData()
+    const mediaUrl   = formData.get('MediaUrl0') as string | null
+    const body       = (formData.get('Body') as string ?? '').trim()
+    const fromRaw    = (formData.get('From') as string ?? '').trim()
+    const fromNumber = fromRaw.replace('whatsapp:', '') // "+573001234567"
+
+    // ── Identificar al remitente y su grupo ──────────────────────────────
+    const { data: perfil } = await supabase
+      .from('perfiles')
+      .select('group_id')
+      .eq('celular', fromNumber)
+      .single()
+
+    if (!perfil) {
+      return twimlResponse('Número no registrado. Regístrate en la app para usar este servicio.')
+    }
+
+    const groupId = perfil.group_id
 
     // ── Caso 1: el usuario elige categoría respondiendo con un número 1-6 ──
     const eleccion = parseInt(body)
@@ -150,6 +193,7 @@ Deno.serve(async (req: Request) => {
         .from('gastos')
         .select('*')
         .eq('estado', 'pendiente')
+        .eq('group_id', groupId)
         .order('fecha', { ascending: false })
         .limit(1)
         .single()
@@ -167,6 +211,17 @@ Deno.serve(async (req: Request) => {
         return twimlResponse('Error al confirmar el gasto. Intenta de nuevo.')
       }
 
+      notificarGasto({
+        supabaseUrl: Deno.env.get('SUPABASE_URL')!,
+        serviceKey:  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+        descripcion: pendiente.descripcion,
+        monto:       pendiente.monto,
+        categoria:   categoriaElegida.valor,
+        fecha:       String(pendiente.fecha).split('T')[0],
+        groupId,
+        excluir:     fromNumber,
+      })
+
       return twimlResponse(
         `✅ Gasto confirmado:\n` +
         `${categoriaElegida.emoji} *${pendiente.descripcion}*\n` +
@@ -178,13 +233,12 @@ Deno.serve(async (req: Request) => {
     // ── Caso 2: imagen o texto → llamar a Claude con tool use ──
     let claudeContent: unknown[]
 
-    const hoy     = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Bogota' }).format(new Date())
+    const hoy      = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Bogota' }).format(new Date())
     const ahoraStr = new Date().toLocaleString('sv-SE', { timeZone: 'America/Bogota' }).replace(' ', 'T').slice(0, 16)
-    // ej: "2026-04-13T15:30" — hora actual Colombia para que Claude calcule "en 1 hora", "mañana a las 8am", etc.
 
     if (mediaUrl) {
-      const accountSid = Deno.env.get('TWILIO_ACCOUNT_SID')!
-      const authToken  = Deno.env.get('TWILIO_AUTH_TOKEN')!
+      const accountSid  = Deno.env.get('TWILIO_ACCOUNT_SID')!
+      const authToken   = Deno.env.get('TWILIO_AUTH_TOKEN')!
       const credentials = btoa(`${accountSid}:${authToken}`)
 
       const imgResponse = await fetch(mediaUrl, {
@@ -207,16 +261,12 @@ Deno.serve(async (req: Request) => {
         { type: 'text', text: `Extrae los datos del gasto de este recibo. Fecha y hora actual en Colombia: ${ahoraStr}.` },
       ]
     } else if (body) {
-      claudeContent = [
-        { type: 'text', text: `Extrae los datos de este mensaje: "${body}". Fecha y hora actual en Colombia: ${ahoraStr}.` },
-      ]
+      claudeContent = [{ type: 'text', text: `${body}\n\nFecha actual en Colombia: ${hoy}. Hora actual: ${ahoraStr}.` }]
     } else {
-      return twimlResponse(
-        'Envíame una foto de un recibo o un mensaje como:\n"Almuerzo en El Corral 35000 comida"'
-      )
+      return twimlResponse('No recibí ningún mensaje ni imagen.')
     }
 
-    const claudeResponse = await fetch('https://api.anthropic.com/v1/messages', {
+    const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'x-api-key':         Deno.env.get('ANTHROPIC_API_KEY')!,
@@ -228,43 +278,37 @@ Deno.serve(async (req: Request) => {
         model:      'claude-sonnet-4-6',
         max_tokens: 1024,
         system: [{ type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
-        tools: [
-          ...TOOLS.slice(0, -1),
-          { ...TOOLS[TOOLS.length - 1], cache_control: { type: 'ephemeral' } },
-        ],
-        tool_choice: { type: 'any' },
-        messages:    [{ role: 'user', content: claudeContent }],
+        tools: TOOLS,
+        messages: [{ role: 'user', content: claudeContent }],
       }),
     })
 
-    const claudeData = await claudeResponse.json()
+    const claudeData = await claudeRes.json()
+    const toolUse    = claudeData.content?.find((b: { type: string }) => b.type === 'tool_use')
 
-    // Leer qué herramienta eligió Claude
-    const toolBlock = claudeData.content?.find((b: { type: string }) => b.type === 'tool_use')
+    if (!toolUse) return twimlResponse('No pude procesar el mensaje. Intenta de nuevo.')
 
-    if (!toolBlock) {
-      return twimlResponse('No pude procesar la solicitud. Intenta de nuevo.')
-    }
-
-    const { name, input } = toolBlock
+    const { name, input } = toolUse
 
     // ── registrar_tarea ──
     if (name === 'registrar_tarea') {
       const { data: ultimos } = await supabase
         .from('tareas')
         .select('orden')
+        .eq('group_id', groupId)
         .order('orden', { ascending: false })
         .limit(1)
 
       const siguienteOrden = ultimos?.[0]?.orden != null ? ultimos[0].orden + 1 : 0
-
       const tareaId = Date.now()
+
       const { error } = await supabase.from('tareas').insert({
         id:             tareaId,
         descripcion:    String(input.descripcion).slice(0, 120),
         responsable:    null,
         fecha_registro: new Date().toISOString(),
         orden:          siguienteOrden,
+        group_id:       groupId,
       })
 
       if (error) return twimlResponse('Error al guardar la tarea. Intenta de nuevo.')
@@ -272,10 +316,11 @@ Deno.serve(async (req: Request) => {
       if (Array.isArray(input.alarmas) && input.alarmas.length > 0) {
         await supabase.from('alarmas').insert(
           input.alarmas.map((r: { fecha_hora: string; loop: boolean }) => ({
-            tarea_id: tareaId,
-            fecha_hora:      colombiaLocalToUTC(r.fecha_hora),
-            loop:            r.loop ?? false,
-            loop_semanal:    false,
+            tarea_id:   tareaId,
+            fecha_hora: colombiaLocalToUTC(r.fecha_hora),
+            loop:       r.loop ?? false,
+            loop_semanal: false,
+            group_id:   groupId,
           }))
         )
       }
@@ -286,7 +331,7 @@ Deno.serve(async (req: Request) => {
       return twimlResponse(`📋 Tarea guardada:\n*${input.descripcion}*${recMsg}`)
     }
 
-    // ── registrar_gasto: Claude está seguro de todo ──
+    // ── registrar_gasto ──
     if (name === 'registrar_gasto') {
       const cat = CATEGORIAS.find(c => c.valor === input.categoria)!
 
@@ -297,9 +342,21 @@ Deno.serve(async (req: Request) => {
         categoria:   input.categoria,
         fecha:       `${input.fecha}T12:00:00Z`,
         estado:      'confirmado',
+        group_id:    groupId,
       })
 
       if (error) return twimlResponse('Error al guardar el gasto. Intenta de nuevo.')
+
+      notificarGasto({
+        supabaseUrl: Deno.env.get('SUPABASE_URL')!,
+        serviceKey:  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+        descripcion: String(input.descripcion),
+        monto:       Number(input.monto),
+        categoria:   input.categoria,
+        fecha:       `${input.fecha}T12:00:00Z`,
+        groupId,
+        excluir:     fromNumber,
+      })
 
       return twimlResponse(
         `✅ Gasto registrado:\n` +
@@ -309,15 +366,16 @@ Deno.serve(async (req: Request) => {
       )
     }
 
-    // ── solicitar_categoria: Claude tiene duda, guarda pendiente y pregunta ──
+    // ── solicitar_categoria ──
     if (name === 'solicitar_categoria') {
       const { error } = await supabase.from('gastos').insert({
         id:          Date.now(),
         descripcion: String(input.descripcion).slice(0, 60),
         monto:       Number(input.monto),
-        categoria:   'comida', // temporal, se actualiza cuando el usuario elige
+        categoria:   'comida',
         fecha:       `${input.fecha}T12:00:00Z`,
         estado:      'pendiente',
+        group_id:    groupId,
       })
 
       if (error) return twimlResponse('Error al guardar. Intenta de nuevo.')
@@ -328,7 +386,7 @@ Deno.serve(async (req: Request) => {
       )
     }
 
-    // ── reportar_error: Claude no pudo leer el recibo ──
+    // ── reportar_error ──
     if (name === 'reportar_error') {
       return twimlResponse(
         `No pude registrar el gasto: ${input.mensaje}\n\n` +

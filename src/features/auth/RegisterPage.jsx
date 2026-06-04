@@ -84,7 +84,7 @@ function RegisterPage({ onVolver, onRegistrado }) {
       password,
       options: {
         data: {
-          celular: `${codigoPais} ${celular.trim()}`,
+          celular: `${codigoPais}${celular.trim().replace(/\s+/g, '')}`,
           pais: codigoPais,
           group_id: groupId,
         },
