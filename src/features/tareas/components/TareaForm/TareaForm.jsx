@@ -14,7 +14,6 @@ function horaAFechaHora(hora) {
 
 function TareaForm({ onAgregar }) {
   const [descripcion, setDescripcion] = useState('')
-  const [responsable, setResponsable] = useState('')
   const [alarmas, setAlarmas] = useState([])
 
   const agregarAlarma = () => {
@@ -42,11 +41,9 @@ function TareaForm({ onAgregar }) {
       .filter(r => r.fecha_hora)
     onAgregar({
       descripcion: descripcion.trim(),
-      responsable: responsable.trim() || null,
       alarmas: recs,
     })
     setDescripcion('')
-    setResponsable('')
     setAlarmas([])
   }
 
@@ -61,16 +58,6 @@ function TareaForm({ onAgregar }) {
           placeholder="¿Qué hay que hacer?"
           value={descripcion}
           onChange={(e) => setDescripcion(e.target.value)}
-        />
-      </div>
-
-      <div>
-        <label className="field-label">Responsable</label>
-        <input
-          type="text"
-          placeholder="¿Quién lo hace?"
-          value={responsable}
-          onChange={(e) => setResponsable(e.target.value)}
         />
       </div>
 

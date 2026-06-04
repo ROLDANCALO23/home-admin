@@ -95,8 +95,6 @@ function GastoForm({ onAgregar, onCategoriaChange, categorias = [], onCambioCate
   const [monto, setMonto] = useState('')
   const [categoria, setCategoria] = useState('')
   const [fecha, setFecha] = useState(hoy)
-  const [responsable, setResponsable] = useState('')
-
   // CRUD categorías
   const [agregandoCat, setAgregandoCat] = useState(false)
   const [editandoCatId, setEditandoCatId] = useState(null)
@@ -115,13 +113,11 @@ function GastoForm({ onAgregar, onCategoriaChange, categorias = [], onCambioCate
       monto: parseFloat(monto),
       categoria,
       fecha: new Date(fecha + 'T12:00:00'),
-      responsable: responsable.trim() || null,
     })
     setDescripcion('')
     setMonto('')
     setCategoria('')
     setFecha(hoy)
-    setResponsable('')
     onCategoriaChange?.('')
   }
 
@@ -191,16 +187,6 @@ function GastoForm({ onAgregar, onCategoriaChange, categorias = [], onCambioCate
           value={fecha}
           max={hoy}
           onChange={(e) => setFecha(e.target.value)}
-        />
-      </div>
-
-      <div>
-        <label className="field-label">Responsable</label>
-        <input
-          type="text"
-          placeholder="¿Quién realizó este gasto?"
-          value={responsable}
-          onChange={(e) => setResponsable(e.target.value)}
         />
       </div>
 

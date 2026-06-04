@@ -49,6 +49,7 @@ function RegisterPage({ onVolver, onRegistrado }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [mostrarPassword, setMostrarPassword] = useState(false)
+  const [nombre, setNombre] = useState('')
   const [celular, setCelular] = useState('')
   const [codigoPais, setCodigoPais] = useState('+57')
   const [codigoGrupo, setCodigoGrupo] = useState('')
@@ -84,6 +85,7 @@ function RegisterPage({ onVolver, onRegistrado }) {
       password,
       options: {
         data: {
+          nombre: nombre.trim(),
           celular: `${codigoPais}${celular.trim().replace(/\s+/g, '')}`,
           pais: codigoPais,
           group_id: groupId,
@@ -153,6 +155,17 @@ function RegisterPage({ onVolver, onRegistrado }) {
                 {mostrarPassword ? <EyeClosed /> : <EyeOpen />}
               </button>
             </div>
+          </div>
+          <div className="auth-field">
+            <label>Nombre</label>
+            <input
+              type="text"
+              value={nombre}
+              onChange={e => setNombre(e.target.value)}
+              placeholder="¿Cómo te llamas?"
+              autoComplete="name"
+              required
+            />
           </div>
           <div className="auth-field">
             <label>Celular</label>

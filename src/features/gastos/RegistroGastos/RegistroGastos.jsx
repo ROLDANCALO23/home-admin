@@ -9,7 +9,7 @@ import { supabase } from '../../../lib/supabase'
 import { useToast } from '../../../lib/useToast'
 import './RegistroGastos.css'
 
-function RegistroGastos() {
+function RegistroGastos({ nombre }) {
   const [gastos, setGastos] = useState([])
   const [cargando, setCargando] = useState(true)
   const [categorias, setCategorias] = useState([])
@@ -44,7 +44,7 @@ function RegistroGastos() {
   }, [])
 
   const agregarGasto = async (gasto) => {
-    const nuevo = { ...gasto, id: Date.now() }
+    const nuevo = { ...gasto, id: Date.now(), responsable: nombre || null }
     const { error } = await supabase.from('gastos').insert(nuevo)
     if (error) {
       addToast('No se pudo guardar el gasto', 'error')

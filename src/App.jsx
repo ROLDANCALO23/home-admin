@@ -14,14 +14,23 @@ function App() {
   const [cargandoAuth, setCargandoAuth] = useState(true)
   const [authView, setAuthView] = useState('login')
   const [grupoNuevo, setGrupoNuevo] = useState(null)
+  const [nombreUsuario, setNombreUsuario] = useState('')
+
+  const cargarPerfil = async (userId) => {
+    const { data } = await supabase.from('perfiles').select('nombre').eq('id', userId).single()
+    setNombreUsuario(data?.nombre ?? '')
+  }
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
+      if (session) cargarPerfil(session.user.id)
       setCargandoAuth(false)
     })
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
+      if (session) cargarPerfil(session.user.id)
+      else setNombreUsuario('')
     })
     return () => subscription.unsubscribe()
   }, [])
@@ -54,8 +63,8 @@ function App() {
     <div className="app-layout">
       <Sidebar paginaActual={pagina} onChangePagina={cambiarPagina} />
       <main className="app-main">
-        {pagina === 'gastos' && <RegistroGastos />}
-        {pagina === 'tareas' && <RegistroTareas />}
+        {pagina === 'gastos' && <RegistroGastos nombre={nombreUsuario} />}
+        {pagina === 'tareas' && <RegistroTareas nombre={nombreUsuario} />}
       </main>
       {grupoNuevo && (
         <div className="grupo-nuevo-overlay" onClick={() => setGrupoNuevo(null)}>

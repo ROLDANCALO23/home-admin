@@ -20,7 +20,6 @@ function horaAFechaHora(hora) {
 
 function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
   const [descripcion, setDescripcion] = useState(tarea.descripcion)
-  const [responsable, setResponsable] = useState(tarea.responsable ?? '')
   const [alarmas, setAlarmas] = useState(
     (tarea.alarmas ?? []).map(r => ({
       ...r,
@@ -60,7 +59,6 @@ function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
     onGuardar({
       ...tarea,
       descripcion: descripcion.trim(),
-      responsable: responsable.trim() || null,
       alarmas: recs,
     })
   }
@@ -77,16 +75,6 @@ function TareaEditDialog({ tarea, onGuardar, onCancelar }) {
               type="text"
               value={descripcion}
               onChange={(e) => setDescripcion(e.target.value)}
-            />
-          </div>
-
-          <div>
-            <label className="field-label">Responsable</label>
-            <input
-              type="text"
-              placeholder="¿Quién lo hace?"
-              value={responsable}
-              onChange={(e) => setResponsable(e.target.value)}
             />
           </div>
 

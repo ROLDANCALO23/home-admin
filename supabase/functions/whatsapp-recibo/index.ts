@@ -174,7 +174,7 @@ Deno.serve(async (req: Request) => {
     // ── Identificar al remitente y su grupo ──────────────────────────────
     const { data: perfil } = await supabase
       .from('perfiles')
-      .select('group_id')
+      .select('group_id, nombre')
       .eq('celular', fromNumber)
       .single()
 
@@ -183,6 +183,7 @@ Deno.serve(async (req: Request) => {
     }
 
     const groupId = perfil.group_id
+    const nombreRemitente: string | null = perfil.nombre || null
 
     // ── Caso 1: el usuario elige categoría respondiendo con un número 1-6 ──
     const eleccion = parseInt(body)
@@ -305,7 +306,7 @@ Deno.serve(async (req: Request) => {
       const { error } = await supabase.from('tareas').insert({
         id:             tareaId,
         descripcion:    String(input.descripcion).slice(0, 120),
-        responsable:    null,
+        responsable:    nombreRemitente,
         fecha_registro: new Date().toISOString(),
         orden:          siguienteOrden,
         group_id:       groupId,
@@ -342,6 +343,7 @@ Deno.serve(async (req: Request) => {
         categoria:   input.categoria,
         fecha:       `${input.fecha}T12:00:00Z`,
         estado:      'confirmado',
+        responsable: nombreRemitente,
         group_id:    groupId,
       })
 
@@ -375,6 +377,7 @@ Deno.serve(async (req: Request) => {
         categoria:   'comida',
         fecha:       `${input.fecha}T12:00:00Z`,
         estado:      'pendiente',
+        responsable: nombreRemitente,
         group_id:    groupId,
       })
 

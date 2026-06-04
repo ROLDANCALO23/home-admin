@@ -7,7 +7,7 @@ import { supabase } from '../../../lib/supabase'
 import { useToast } from '../../../lib/useToast'
 import './RegistroTareas.css'
 
-function RegistroTareas() {
+function RegistroTareas({ nombre }) {
   const [tareas, setTareas] = useState([])
   const [cargando, setCargando] = useState(true)
   const [tareaEditando, setTareaEditando] = useState(null)
@@ -63,6 +63,7 @@ function RegistroTareas() {
     const nueva = {
       ...tarea,
       id,
+      responsable: nombre || null,
       fecha_registro: new Date().toISOString(),
       orden: tareas.length,
     }
